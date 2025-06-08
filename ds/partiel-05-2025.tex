@@ -1,0 +1,109 @@
+% stephane [DOT] adjemian [AT] univ [DASH] lemans [DOT] fr
+\documentclass[10pt,a4paper,notitlepage,twocolumn]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsbsy}
+\usepackage[T1]{fontenc}
+\usepackage[utf8x]{inputenc}
+\usepackage{palatino}
+\usepackage{scrtime}
+\usepackage[frenchb]{babel}
+\usepackage{float}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\exercice}[1]{\textsc{\textbf{Exercice}} #1}
+\newcommand{\question}[1]{\textbf{(#1)}}
+\setlength{\parindent}{0cm}
+
+
+
+\begin{document}
+
+
+\title{\textsc{Économétrie des Variables Qualitatives}}
+\author{\textsc{Université du Mans (Examen, L3)}}
+\date{}
+
+
+\maketitle
+
+\thispagestyle{empty}
+
+\textbf{\textsc{Exercice} I}\newline
+
+\question{1} Soit un échantillon de variables
+dichotomiques $(y_1, \dots, y_N)$ identiquement et indépendament
+distribués selon une loi de Bernouilli de paramètre $p$. Chaque $y$
+vaut 1 avec probabilité $p$ ou 0 avec probabilité $(1-p).$ Calculer
+l'espérance et la variance de $y$.\newline
+
+\question{2} Écrire la fonction de probabilité de $y$.\newline
+
+\question{3} Écrire la fonction de log-vraisemblance.\newline
+
+\question{4} Calculer l'estimateur du maximum de vraisemblance
+de $p$.\newline
+
+\question{5} Calculer la variance de cet estimateur et caractériser le
+comportement asymptotique de cet estimateur.\newline
+
+\bigskip
+
+\textbf{\textsc{Exercice} II}\newline
+
+On s'intéresse aux conséquences de l'omission d'une variable exogène
+dans un modèle logit. On suppose que les données sont générées par un
+modèle logit admettant deux variables explicatives, $x_1$ et $x_2$. La
+probabilité que $y_i$ ($i=1,\dots,N$) soit égal à 1 est~:
+\[
+\mathbb P \left( y_i=1 \right) = F\left( x_{1,i}b_1 + x_{2,i}b_2\right)
+\]
+où $F$ est la fonction de répartition d'une loi logistique, $b_1$
+et $b_2$ les vraies valeurs (inconnues) des paramètres.\newline
+
+\question{1} Donner une expression de la fonction de répartition d'une
+loi logistique, $F(z)$.\newline
+
+\question{2} Donner l'expression de la fonction de densité de
+probabilité d'une loi logistique, puis montrer que~:
+\[
+  \frac{\mathrm d}{\mathrm d z}\log F(z) = 1-F(z)
+\]
+et
+\[
+  \frac{\mathrm d}{\mathrm d z}\log 1-F(z) = -F(z)
+\]
+
+\question{3} L'économètre estime le modèle logit en omettant la
+variable $x_2$ (qu'il n'observe pas). Écrire la fonction de
+vraisemblance.\newline
+
+\question{4} Calculer la condition du premier ordre, définissant
+l'estimateur du maximum de vraisemblance du paramètre $b_1$. Montrer
+que cette condition peut s'écrire sous la forme~:
+\[
+\sum_{i=1}^N \left( y_i - F\left( x_{1,i}\hat b_1 \right) \right)x_{1,i} = 0
+\]
+Interpréter cette condition, en la comparant à la condition
+d'identification dans modèle linéaire (avec les MCO par
+exemple). Est-il possible d'obtenir une expression analytique
+de $\hat b_1$~? Pourquoi~? Expliquer comment on peut obtenir $\hat b_1$.\newline
+
+\question{5} Expliquer pourquoi la condition du premier ordre est liée à la condition moment suivante~:
+\[
+\mathbb E\left[ \left( y-F(x_1\hat b_1) \right)x_1 \right] = 0
+\]
+
+\question{6} En utilisant la loi des espérances itérées et le modèle
+générateur des données, montrer que l'on peut réécrire la condition de
+moment sous la forme~:
+\[
+\mathbb E_x\left[  \left( F(x_1b_1 + x_2b_2) - F(x_1\hat b_1) \right)x_1\right] = 0
+\]
+
+\question{7} Sous quelle condition $\hat b_1$ est-il un estimateur
+convergent~? Comparer avec la condition d'absence de biais de variable
+omise dans un modèle linéaire.
+
+\end{document}
