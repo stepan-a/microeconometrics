@@ -1,0 +1,95 @@
+% stephane [DOT] adjemian [AT] univ [DASH] lemans [DOT] fr
+\documentclass[10pt,a4paper,notitlepage,twocolumn]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsbsy}
+\usepackage[T1]{fontenc}
+\usepackage[utf8x]{inputenc}
+\usepackage{palatino}
+\usepackage{scrtime}
+\usepackage[frenchb]{babel}
+\usepackage{float}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\exercice}[1]{\textsc{\textbf{Exercice}} #1}
+\newcommand{\question}[1]{\textbf{(#1)}}
+\setlength{\parindent}{0cm}
+
+
+
+\begin{document}
+
+
+\title{\textsc{Économétrie des Variables Qualitatives}}
+\author{\textsc{Université du Mans (Rattrapage, L3)}}
+\date{Mardi 17 juin 2025}
+
+
+\maketitle
+
+\question{1} Soit un échantillon de variables
+dichotomiques $(y_1, \dots, y_N)$ identiquement et indépendament
+distribués selon une loi de Bernouilli de paramètre $p$. Chaque $y$
+vaut 1 avec probabilité $p$ ou 0 avec probabilité $(1-p).$ Calculer
+l'espérance et la variance de $y$.\newline
+
+\question{2} Écrire la fonction de probabilité de $y$.\newline
+
+\question{3} Écrire la fonction de log-vraisemblance.\newline
+
+\question{4} Calculer l'estimateur du maximum de vraisemblance
+de $p$.\newline
+
+\question{5} Calculer la variance de cet estimateur (à partir de
+l'expression de l'estimateur), caractériser le comportement
+asymptotique de cet estimateur. Déterminer une fonction $f(N)$ telle
+que $f(N)\hat p$ converge vers une loi normale (justifier votre
+réponse).\newline
+
+\question{6} Nous supposons maintenant que la probabilité est
+spécifique à chaque $y_i$, les variables aléatoires ne sont plus
+identiquement et indépendament distribuées, seulement indépendament
+distribuées. Chaque probabilité $p_i$ est déterminée par un ensemble
+de variables exogènes et de paramètres~:
+\[
+  p_i = p(X_i, \beta)
+\]
+On cherche maintenant à estimer le vecteur de paramètres $\beta$. Écrire la log-vraisemblance.\newline
+
+\question{7} Calculer le score montrer qu'il est d'espérance nulle.\newline
+
+\question{8} Calculer la matrice hessienne de la
+log-vraisemblance. Donner une expression simple de son espérance en
+exploitant les propriétés de la loi de Bernouilli. Dans quel cadre
+cette expression peut-elle être utilisée~?\newline
+
+\question{9} Afin d'expliciter la fonction $p$ qui détermine la
+probabilité que $y_i$ soit égal à 1, on postule un  modèle à variable
+latente. On définit la variable latente $z_i$ par
+\[
+ z_i = X_i\beta + u_i
+\]
+où $u_i$ est une variable aléatoire identiquement et indépendament
+distribuée d'espérance nulle, $X_i$ est un vecteur $1\times K$ de
+variables exogènes et $\beta$ un vecteur $K\times 1$ de paramètres. On
+note $F$ la fonction de répartition de $u_i$. On postule alors~:
+\[
+  y_i = \begin{cases}
+    & 1 \quad\text{si }z_i> 0\\
+    & 0 \quad\text{sinon}
+  \end{cases}
+\]
+Déterminer la forme de la fonction $p(X_i, \beta)$.\newline
+
+\question{10} Dans la suite on suppose que $u_i$ suit une loi
+logistique. Écrire la log-vraisemblance du modèle, en exploitant les
+propriétés de la loi logistique pour simplifier son
+expression.\newline
+
+\question{11} Calculer la matrice hessienne et montrer que celle-ci
+est définie négative. Quelles sont les conséquences~?\newline
+
+\question{12} Comment estimer le vecteur de paramètre $\beta$~?
+
+\end{document}
