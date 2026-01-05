@@ -1,0 +1,11 @@
+[[https://git.ithaca.fr/stepan/microeconometrics/badges/master/pipeline.svg]]
+#+html:<div align="center">
+* Cours d'Économétrie des Variables Qualitatives
+   (Le Mans, L3)
+#+html:</div>
+
+\\
+
+ - [[https://le-mans.adjemian.eu/microeconometrics/chapitre-1.pdf][Introduction]].
+
+\\
