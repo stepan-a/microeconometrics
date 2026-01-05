@@ -52,7 +52,7 @@
 % COMMANDES PERSONNALISÉES
 % ============================================
 \newcommand{\E}{\mathbb{E}}
-\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Var}{\mathbb{V}}
 \newcommand{\Cov}{\mathrm{Cov}}
 \newcommand{\Prob}{\mathbb{P}}
 \newcommand{\R}{\mathbb{R}}
@@ -649,9 +649,9 @@
     \begin{remarquefr}[Structure de la variance]
         La perturbation composite $u_i = D_i u_{1i} + (1-D_i) u_{0i}$ implique :
         \[
-        \Var(u_i) = \begin{cases}
-            \Var(u_{0i}) & \text{si } D_i = 0 \\
-            \Var(u_{1i}) & \text{si } D_i = 1
+        \Var [u_i] = \begin{cases}
+            \Var[u_{0i}] & \text{si } D_i = 0 \\
+            \Var[u_{1i}] & \text{si } D_i = 1
         \end{cases}
         \]
     \end{remarquefr}
@@ -659,7 +659,7 @@
     \vspace{0.3cm}
     
     \begin{alertblock}{Conséquence}
-        Si $\Var(u_{0i}) \neq \Var(u_{1i})$, le modèle présente une \alert{hétéroscédasticité par bloc}. Dans ce cas :
+        Si $\Var[u_{0i}] \neq \Var[u_{1i}]$, le modèle présente une \alert{hétéroscédasticité par bloc}. Dans ce cas :
         \begin{itemize}
             \item Les MCO restent convergents mais inefficaces
             \item Il faut utiliser les \textbf{moindres carrés pondérés} ou les \textbf{écarts-types robustes}
@@ -1065,8 +1065,8 @@
     
     \begin{block}{Distinction}
         \begin{itemize}
-            \item \textbf{Modèle de Poisson homogène} : $\Var(\exp(u_i)) = 0$ (pas d'hétérogénéité inobservée)
-            \item \textbf{Modèle de Poisson hétérogène} : $\Var(\exp(u_i)) > 0$ (hétérogénéité présente)
+            \item \textbf{Modèle de Poisson homogène} : $\Var[\exp(u_i)] = 0$ (pas d'hétérogénéité inobservée)
+            \item \textbf{Modèle de Poisson hétérogène} : $\Var[\exp(u_i)] > 0$ (hétérogénéité présente)
         \end{itemize}
     \end{block}
     
