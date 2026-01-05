@@ -1,0 +1,18 @@
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+  TERM: linux
+  GIT_STRATEGY: clone
+
+cours:
+  stage: build
+  only:
+    - master@stepan/microeconometrics
+  script:
+    - make
+    - scp cours/chapitre-1.pdf /puck/www/le-mans.adjemian.eu/microeconometrics
+    - scp ds/*.pdf /puck/www/le-mans.adjemian.eu/microeconometrics/examens
+  artifacts:
+    paths:
+      - cours/chapitre-1.pdf
+  tags:
+    - stepan@puck
