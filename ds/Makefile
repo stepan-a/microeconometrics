@@ -4,14 +4,10 @@ PDFS     := $(TEXFILES:.tex=.pdf)
 all: $(PDFS)
 
 %.pdf: %.tex
-	latexmk -pdf -interaction=nonstopmode -quiet $<
-	latexmk -c $<
-	rm -f *.synctex.gz
+	@rubber --src-specials --unsafe --pdf $<
+	@rubber --clean $<
 
-clean:
-	latexmk -c
+clean-all:
+	@rm -f *.pdf
 
-distclean:
-	latexmk -C
-
-.PHONY: clean distclean
+.PHONY: all
