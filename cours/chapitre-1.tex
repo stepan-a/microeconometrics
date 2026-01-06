@@ -795,16 +795,15 @@
 \begin{frame}{Classification des variables qualitatives expliquées}
     \begin{center}
         \begin{tikzpicture}[scale=0.75, every node/.style={transform shape},
-            node distance=1.2cm,
             box/.style={rectangle, draw=darkblue, fill=lightblue, text width=2.8cm, align=center, minimum height=0.8cm, rounded corners, font=\small},
             arrow/.style={->, >=stealth, thick, darkblue}
         ]
-        \node[box] (qual) {Variables qualitatives expliquées};
-        \node[box, below left=0.8cm and 0.3cm of qual] (dicho) {Dichotomiques};
-        \node[box, below=0.8cm of qual] (poly) {Polytomiques ordonnées};
-        \node[box, below right=0.8cm and 0.3cm of qual] (count) {Comptage};
-        \node[box, below=2cm of qual] (cens) {Censurées/Tronquées};
-        
+        \node[box] (qual) at (0,0) {Variables qualitatives expliquées};
+        \node[box] (dicho) at (-6,-1.5) {Dichotomiques};
+        \node[box] (poly) at (-2,-1.5) {Polytomiques ordonnées};
+        \node[box] (count) at (2,-1.5) {Comptage};
+        \node[box] (cens) at (6,-1.5) {Censurées/Tronquées};
+
         \draw[arrow] (qual) -- (dicho);
         \draw[arrow] (qual) -- (poly);
         \draw[arrow] (qual) -- (count);
