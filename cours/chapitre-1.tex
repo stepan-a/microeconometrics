@@ -1213,24 +1213,30 @@ P(Y_i = 1 | X_i) = P(Y_i^* > 0 | X_i) = P(\varepsilon_i > -X_i'\beta) = F(X_i'\b
     thick,
     legend pos=south east
 ]
+
+% MPL
+\addplot[domain=-4:4, samples=100, red, very thick] {0.5 + 0.25*x};
+\addlegendentry{MPL}
+
+% Probit (approximation de Phi)
+\addplot[domain=-4:4, samples=200, blue, very thick] {1/(1+exp(-1.7*x))};
+\addlegendentry{Probit}
+
+
+% Logit
+\addplot[domain=-4:4, samples=200, green!60!black, very thick, dashed] {1/(1+exp(-x))};
+\addlegendentry{Logit}
+
 % Limites 0 et 1
 \addplot[dashed, black, thin] coordinates {(-4,0) (4,0)};
 \addplot[dashed, black, thin] coordinates {(-4,1) (4,1)};
 
-% MPL
-\addplot[domain=-4:4, samples=100, red, very thick] {0.5 + 0.25*x};
 
-% Probit (approximation de Phi)
-\addplot[domain=-4:4, samples=200, blue, very thick] {1/(1+exp(-1.7*x))};
-
-% Logit
-\addplot[domain=-4:4, samples=200, green!60!black, very thick, dashed] {1/(1+exp(-x))};
 
 % Zones problématiques
 \node[red] at (axis cs:-3,-0.1) {\small Impossible};
 \node[red] at (axis cs:3,1.1) {\small Impossible};
 
-\legend{MPL, Probit $\Phi(X'\beta)$, Logit $\Lambda(X'\beta)$}
 \end{axis}
 \end{tikzpicture}
 \end{center}
