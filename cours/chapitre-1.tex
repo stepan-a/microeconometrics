@@ -129,7 +129,7 @@
 % PARTIE I : VARIABLES QUALITATIVES EXPLICATIVES
 % ============================================
 
-{
+
 \setbeamercolor{background canvas}{bg=darkblue}
 \setbeamercolor{normal text}{fg=white}
 \usebeamercolor[fg]{normal text}
@@ -619,6 +619,30 @@
     \begin{alertblock}{Hétérogénéité des effets}
         Ce modèle autorise une hétérogénéité de l'effet du traitement selon les caractéristiques $X_i$.
     \end{alertblock}
+\end{frame}
+
+\begin{frame}{Rappel : Le produit de Kronecker}
+    \begin{definitionfr}[Produit de Kronecker]
+        Soient $A = (a_{ij})$ une matrice de dimension $(m \times n)$ et $B$ une matrice de dimension $(p \times q)$. Le \alert{produit de Kronecker} $A \otimes B$ est la matrice de dimension $(mp \times nq)$ définie par blocs :
+        \[
+        A \otimes B = \begin{pmatrix}
+            a_{11} B & a_{12} B & \cdots & a_{1n} B \\
+            a_{21} B & a_{22} B & \cdots & a_{2n} B \\
+            \vdots & \vdots & \ddots & \vdots \\
+            a_{m1} B & a_{m2} B & \cdots & a_{mn} B
+        \end{pmatrix}
+        \]
+    \end{definitionfr}
+
+    \vspace{0.3cm}
+
+    \begin{exemplefr}[Application aux indicatrices]
+        Avec $D_i = (D_{1i}, \ldots, D_{pi})$ vecteur $(1 \times p)$ et $X_i$ vecteur $(1 \times m)$ :
+        \[
+        D_i \otimes X_i = (D_{1i} X_i, D_{2i} X_i, \ldots, D_{pi} X_i)_{1 \times pm}
+        \]
+        Chaque bloc $D_{ji} X_i$ correspond aux variables $X$ \alert{multipliées par l'indicatrice} du groupe $j$.
+    \end{exemplefr}
 \end{frame}
 
 \begin{frame}{Calcul de l'effet moyen}
