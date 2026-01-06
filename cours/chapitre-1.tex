@@ -853,8 +853,8 @@
     
     \vspace{0.3cm}
     
-    \begin{block}{Approche par variable latente}
-        On construit un \textbf{modèle latent} (inobservable) qui représente le critère de décision sous-jacent.
+    \begin{block}{Idée}
+        On va construire un \textbf{modèle latent} (inobservable) qui représente le critère de décision sous-jacent.
     \end{block}
 \end{frame}
 
@@ -880,9 +880,9 @@ Y_i = X_i'\beta + \varepsilon_i \quad \text{avec} \quad Y_i \in \{0, 1\}
 
 \medskip
 
-Par la loi des espérances itérées :
+On a :
 \[
-E[Y_i | X_i] = P(Y_i = 1 | X_i) = X_i'\beta
+E[Y_i | X_i] = X_i'\beta = P(Y_i = 1 | X_i) \text{(loi de Bernoulli)} 
 \]
 
 \bigskip
