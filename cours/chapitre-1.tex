@@ -1246,11 +1246,8 @@ $\Rightarrow$ Les modèles Probit et Logit garantissent $P \in [0,1]$ et capture
 
 \end{frame}
 
-%==============================================================================
-\section{Conclusion}
-%==============================================================================
 
-\begin{frame}{Conclusion}
+\begin{frame}{Résumé}
 
 \textbf{Le Modèle de Probabilité Linéaire (MCO sur $Y$ binaire) :}
 
@@ -1268,7 +1265,8 @@ $\Rightarrow$ Les modèles Probit et Logit garantissent $P \in [0,1]$ et capture
 \begin{itemize}
     \item \textbf{Probit} : $P(Y=1|X) = \Phi(X'\beta)$
     \item \textbf{Logit} : $P(Y=1|X) = \Lambda(X'\beta) = \frac{e^{X'\beta}}{1+e^{X'\beta}}$
-\end{itemize}
+    \item Nous pourrions, en principe, considérer d'autre distributions
+    \end{itemize}
 
 \bigskip
 
@@ -1278,85 +1276,11 @@ $\Rightarrow$ Estimation par \textbf{maximum de vraisemblance}, propriétés asy
 
 
 
-\begin{frame}{Le modèle latent}
-    \begin{block}{Spécification}
-        Soit $\pi_i^*$ une variable latente (inobservable) :
-        \[
-        \pi_i^* = X_i b + u_i, \quad i = 1, \ldots, N
-        \]
-    \end{block}
-    
-    \begin{exemplefr}[Innovation]
-        $\pi_i^*$ représente l'espérance de profit associée à l'introduction d'une innovation, compte tenu d'un effet de remplacement des anciens produits.
-    \end{exemplefr}
-    
-    \vspace{0.3cm}
-    
-    \begin{block}{Lien observé-latent}
-        L'innovation n'est observée que si le gain anticipé dépasse un seuil $\pi_0$ :
-        \[
-        y_i = \begin{cases}
-            1 & \text{si } \pi_i^* > \pi_0 \\
-            0 & \text{si } \pi_i^* \leq \pi_0
-        \end{cases}
-        \]
-    \end{block}
-\end{frame}
-
-\begin{frame}{Calcul de la probabilité}
-    \begin{propositionfr}
-        La probabilité d'observer $y_i = 1$ est :
-        \[
-        \Prob(y_i = 1) = \Prob(\pi_i^* > \pi_0) = \Prob(X_i b + u_i > \pi_0)
-        \]
-    \end{propositionfr}
-    
-    \vspace{0.3cm}
-    
-    \begin{block}{Forme fonctionnelle}
-        La forme explicite dépend de l'hypothèse sur la distribution de $u_i$ :
-        \begin{itemize}
-            \item \textbf{Loi logistique} $\Rightarrow$ Modèle \alert{Logit}
-            \item \textbf{Loi normale} $\Rightarrow$ Modèle \alert{Probit}
-        \end{itemize}
-    \end{block}
-    
-    \begin{remarquefr}
-        D'autres distributions sont possibles ; des tests permettent de choisir la spécification appropriée.
-    \end{remarquefr}
-\end{frame}
-
-\begin{frame}{Schéma récapitulatif}
-    \begin{center}
-        \begin{tikzpicture}[scale=0.7, every node/.style={transform shape},
-            node distance=1.5cm,
-            box/.style={rectangle, draw=darkblue, fill=lightblue, text width=3cm, align=center, minimum height=1cm, rounded corners, font=\small},
-            arrow/.style={->, >=stealth, thick, darkblue}
-        ]
-        \node[box] (latent) {Variable latente\\$\pi_i^* = X_i b + u_i$};
-        \node[box, right=1.8cm of latent] (seuil) {Comparaison au seuil\\$\pi_i^* \gtrless \pi_0$};
-        \node[box, right=1.8cm of seuil] (obs) {Variable observée\\$y_i \in \{0, 1\}$};
-        
-        \draw[arrow] (latent) -- (seuil);
-        \draw[arrow] (seuil) -- (obs);
-        
-        \node[below=0.2cm of latent, text=darkgreen, font=\footnotesize] {Inobservable};
-        \node[below=0.2cm of obs, text=darkgreen, font=\footnotesize] {Observable};
-        \end{tikzpicture}
-    \end{center}
-    
-    \vspace{0.5cm}
-    
-    \begin{block}{Information utilisable}
-        Seules les variables $(y_i, X_i)$ sont observables et utilisables pour l'estimation.
-    \end{block}
-\end{frame}
-
 % --------------------------------------------
 \subsection{Variables polytomiques ordonnées}
 
-\begin{frame}{Définition}
-    \begin{definitionfr}[Variable polytomique ordonnée]
+\begin{frame}{Le cas d'une variable polytomique ordonnée}
+    \begin{definitionfr}
         Variable qualitative à plus de deux modalités, ordonnées entre elles.
     \end{definitionfr}
     
@@ -1466,8 +1390,8 @@ $\Rightarrow$ Estimation par \textbf{maximum de vraisemblance}, propriétés asy
 % --------------------------------------------
 \subsection{Variables de comptage}
 
-\begin{frame}{Caractéristiques}
-    \begin{definitionfr}[Variable de comptage]
+\begin{frame}{Le cas d'une variable de comptage}
+    \begin{definitionfr}
         Variable prenant ses valeurs dans $\N = \{0, 1, 2, \ldots\}$, représentant le nombre d'occurrences d'un événement.
     \end{definitionfr}
     
@@ -1503,6 +1427,7 @@ $\Rightarrow$ Estimation par \textbf{maximum de vraisemblance}, propriétés asy
     \end{block}
 \end{frame}
 
+
 \begin{frame}{Sources d'aléa}
     \begin{alertblock}{Double source d'aléa}
         \begin{enumerate}
@@ -1523,124 +1448,6 @@ $\Rightarrow$ Estimation par \textbf{maximum de vraisemblance}, propriétés asy
     \begin{remarquefr}
         Le modèle de Poisson homogène correspond à une loi de durée exponentielle pour le temps entre événements.
     \end{remarquefr}
-\end{frame}
-
-% --------------------------------------------
-\subsection{Variables censurées ou tronquées}
-
-\begin{frame}{Définition}
-    \begin{definitionfr}[Variable censurée/tronquée]
-        Variable dont on n'observe la réalisation que pour certains individus, en raison :
-        \begin{itemize}
-            \item Du processus de collecte des données (censure exogène)
-            \item D'une décision prise par les individus (censure endogène)
-        \end{itemize}
-    \end{definitionfr}
-    
-    \vspace{0.3cm}
-    
-    \begin{exemplefr}[R\&D]
-        Une entreprise doit décider :
-        \begin{enumerate}
-            \item Si elle investit en R\&D (décision de participation)
-            \item Combien elle investit (montant, observé seulement si participation)
-        \end{enumerate}
-        Ces deux décisions sont étroitement reliées.
-    \end{exemplefr}
-\end{frame}
-
-\begin{frame}{Le modèle Tobit généralisé}
-    \begin{block}{Équation de sélection}
-        Le critère de décision est modélisé par une variable latente $\pi_i^*$ :
-        \[
-        \pi_i^* = X_{1i} b_1 + u_{1i}, \quad i = 1, \ldots, N
-        \]
-        La décision de participer est :
-        \[
-        y_i = \begin{cases}
-            1 & \text{si } \pi_i^* \geq 0 \\
-            0 & \text{si } \pi_i^* < 0
-        \end{cases}
-        \]
-    \end{block}
-    
-    \begin{block}{Équation de résultat}
-        Le montant investi est déterminé par :
-        \[
-        r_i^* = X_{2i} b_2 + u_{2i}, \quad i = 1, \ldots, N
-        \]
-    \end{block}
-\end{frame}
-
-\begin{frame}{Observation et corrélation}
-    \begin{block}{Variable observable}
-        Le montant n'est observé que si l'entreprise participe :
-        \[
-        r_i = \begin{cases}
-            r_i^* & \text{si } \pi_i^* \geq 0 \\
-            \text{manquant} & \text{si } \pi_i^* < 0
-        \end{cases}
-        \]
-    \end{block}
-    
-    \vspace{0.3cm}
-    
-    \begin{alertblock}{Corrélation des équations}
-        Les deux variables latentes $\pi_i^*$ et $r_i^*$ sont généralement \alert{corrélées} :
-        \begin{itemize}
-            \item Le montant optimal $r^*$ est obtenu en maximisant le profit $\pi^*$
-            \item Les deux décisions sont déterminées simultanément
-        \end{itemize}
-        Cette corrélation génère un \textbf{biais de sélection} si on l'ignore.
-    \end{alertblock}
-\end{frame}
-
-\begin{frame}{Modèle de Heckman}
-    \begin{theoremefr}[Modèle Tobit généralisé]
-        Si les perturbations suivent une loi normale bivariée :
-        \[
-        \begin{pmatrix} u_{1i} \\ u_{2i} \end{pmatrix} \sim \mathcal{N}\left( \begin{pmatrix} 0 \\ 0 \end{pmatrix}, \begin{pmatrix} \sigma_1^2 & \rho\sigma_1\sigma_2 \\ \rho\sigma_1\sigma_2 & \sigma_2^2 \end{pmatrix} \right)
-        \]
-        on obtient le \alert{modèle Tobit généralisé de Heckman}.
-    \end{theoremefr}
-    
-    \vspace{0.3cm}
-    
-    \begin{block}{Paramètre clé}
-        Le coefficient de corrélation $\rho$ :
-        \begin{itemize}
-            \item Si $\rho = 0$ : pas de biais de sélection, on peut estimer séparément
-            \item Si $\rho \neq 0$ : biais de sélection, il faut corriger (procédure de Heckman)
-        \end{itemize}
-    \end{block}
-\end{frame}
-
-\begin{frame}{Schéma du processus}
-    \begin{center}
-        \begin{tikzpicture}[scale=0.55, every node/.style={transform shape},
-            node distance=1cm,
-            box/.style={rectangle, draw=darkblue, fill=lightblue, text width=2.5cm, align=center, minimum height=0.8cm, rounded corners, font=\small},
-            decision/.style={diamond, draw=darkblue, fill=orange!20, text width=1.5cm, align=center, aspect=2, font=\small},
-            arrow/.style={->, >=stealth, thick, darkblue}
-        ]
-        
-        \node[box] (latent1) {Critère de décision\\$\pi_i^* = X_{1i} b_1 + u_{1i}$};
-        \node[decision, right=1.5cm of latent1] (dec) {$\pi_i^* \geq 0$ ?};
-        \node[box, above right=0.7cm and 1.5cm of dec] (oui) {Participation\\$y_i = 1$};
-        \node[box, below right=0.7cm and 1.5cm of dec] (non) {Non-participation\\$y_i = 0$};
-        \node[box, right=1.5cm of oui] (result) {Montant observé\\$r_i = r_i^*$};
-        \node[box, right=1.5cm of non] (manq) {Montant manquant};
-        
-        \draw[arrow] (latent1) -- (dec);
-        \draw[arrow] (dec) -- node[above left, font=\scriptsize] {Oui} (oui);
-        \draw[arrow] (dec) -- node[below left, font=\scriptsize] {Non} (non);
-        \draw[arrow] (oui) -- (result);
-        \draw[arrow] (non) -- (manq);
-        
-        % Corrélation
-        \draw[darkred, dashed, thick, <->] (latent1.south) -- ++(0,-0.8) -| node[pos=0.25, below, font=\scriptsize] {$\rho \neq 0$} (result.south);
-        \end{tikzpicture}
-    \end{center}
 \end{frame}
 
 % ============================================
