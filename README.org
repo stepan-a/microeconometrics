@@ -7,5 +7,6 @@
 \\
 
  - [[https://le-mans.adjemian.eu/microeconometrics/chapitre-1.pdf][Introduction]].
+ - [[https://le-mans.adjemian.eu/microeconometrics/chapitre-2.pdf][Maximum de vraisemblance]].
 
 \\

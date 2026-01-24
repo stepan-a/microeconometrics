@@ -1,3 +1,6 @@
 *.pdf
 
+cours/auto/*
 ds/auto/*
+
+cours/git.hash
