@@ -11,10 +11,12 @@ cours:
     - make
     - scp cours/chapitre-1.pdf /puck/www/le-mans.adjemian.eu/microeconometrics
     - scp cours/chapitre-2.pdf /puck/www/le-mans.adjemian.eu/microeconometrics
+    - scp cours/chapitre-3.pdf /puck/www/le-mans.adjemian.eu/microeconometrics
     - scp ds/*.pdf /puck/www/le-mans.adjemian.eu/microeconometrics/examens
   artifacts:
     paths:
       - cours/chapitre-1.pdf
       - cours/chapitre-2.pdf
+      - cours/chapitre-3.pdf
   tags:
     - stepan@puck
