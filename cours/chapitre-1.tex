@@ -1,913 +1,814 @@
-\documentclass[10pt,aspectratio=169]{beamer}
+\synctex=1
+\documentclass[11pt,aspectratio=169]{beamer}
 
-% ============================================
-% PACKAGES
-% ============================================
-\usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[french,provide=*]{babel}
-\usepackage{amsmath,amssymb,amsthm}
+\usepackage{amsmath,amssymb,amsfonts}
 \usepackage{mathtools}
 \usepackage{bm}
-\usepackage{graphicx}
-\usepackage{booktabs}
 \usepackage{tikz}
-\usetikzlibrary{arrows.meta,positioning,patterns,shapes,calc,decorations.pathreplacing}
-\usepackage{hyperref}
-
-
-\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes,calc}
 \usepackage{pgfplots}
+\usepackage{xcolor}
+\usepackage{booktabs}
 \pgfplotsset{compat=1.18}
 
-% ============================================
-% THEME ET COULEURS
-% ============================================
-\usetheme{Madrid}
-\usecolortheme{whale}
+% Police serif pour les mathématiques
+\usefonttheme[onlymath]{serif}
 
+% Couleurs pour les figures
 \definecolor{darkblue}{RGB}{0,51,102}
 \definecolor{lightblue}{RGB}{230,240,250}
 \definecolor{darkgreen}{RGB}{0,102,51}
 \definecolor{darkred}{RGB}{153,0,0}
 \definecolor{orange}{RGB}{255,128,0}
+\definecolor{violet}{RGB}{102,0,153}
+\definecolor{lightgreen}{RGB}{220,245,220}
+\definecolor{lightorange}{RGB}{255,240,220}
+\definecolor{gray}{gray}{0.4}
 
-\setbeamercolor{structure}{fg=darkblue}
-\setbeamercolor{block title}{bg=darkblue,fg=white}
-\setbeamercolor{block body}{bg=lightblue,fg=black}
-\setbeamercolor{block title example}{bg=darkgreen,fg=white}
-\setbeamercolor{block body example}{bg=green!10,fg=black}
-\setbeamercolor{block title alerted}{bg=darkred,fg=white}
-\setbeamercolor{block body alerted}{bg=red!10,fg=black}
-
-% ============================================
-% ENVIRONNEMENTS THÉORÈMES
-% ============================================
-\theoremstyle{definition}
-\newtheorem{definitionfr}{Définition}
-\newtheorem{exemplefr}{Exemple}
-\newtheorem{remarquefr}{Remarque}
-\newtheorem{propositionfr}{Proposition}
-\newtheorem{theoremefr}{Théorème}
-\newtheorem{corollairefr}{Corollaire}
-\newtheorem{lemmefr}{Lemme}
-\newtheorem{proprietefr}{Propriété}
-
-% ============================================
-% COMMANDES PERSONNALISÉES
-% ============================================
+% Commandes mathématiques
 \newcommand{\E}{\mathbb{E}}
 \newcommand{\Var}{\mathbb{V}}
-\newcommand{\Cov}{\mathrm{Cov}}
 \newcommand{\Prob}{\mathbb{P}}
-\newcommand{\R}{\mathbb{R}}
 \newcommand{\N}{\mathbb{N}}
-\newcommand{\indep}{\perp\!\!\!\perp}
-\newcommand{\plim}{\overset{p}{\longrightarrow}}
-\newcommand{\dlim}{\overset{d}{\longrightarrow}}
-\newcommand{\aslim}{\overset{a.s.}{\longrightarrow}}
 \DeclareMathOperator*{\argmax}{arg\,max}
 \DeclareMathOperator*{\argmin}{arg\,min}
 
-% ============================================
-% INFORMATIONS DU DOCUMENT
-% ============================================
-\title[Économétrie des Variables Qualitatives]{Économétrie des Variables Qualitatives}
+% Git hash
+\usepackage{xstring}
+\usepackage{catchfile}
+\immediate\write18{git rev-parse HEAD > git.hash}
+\CatchFileDef{\HEAD}{git.hash}{\endlinechar=-1}
+\newcommand{\gitrevision}{\StrLeft{\HEAD}{7}}
+
+\usepackage{ccicons}
+
+% Pied de page personnalisé
+\setbeamertemplate{footline}{
+  \hfill\vspace*{1pt}\href{https://creativecommons.org/publicdomain/zero/1.0/deed.fr}{\cczero}\enspace\href{https://github.com/stepan-a/microeconometrics}{\gitrevision}\enspace--\enspace\insertframenumber/\inserttotalframenumber\enspace--\enspace\today\enspace}
+
+% Supprimer la barre de navigation
+\setbeamertemplate{navigation symbols}{}
+
+\title{Économétrie des variables qualitatives}
 \subtitle{Introduction}
-\date{Janvier, 2026}
+\author{}
+\date{}
+\institute{}
+
+\AtBeginSection[]
+{
+  \begin{frame}
+    \frametitle{Plan}
+    \tableofcontents[currentsection]
+  \end{frame}
+}
 
 \begin{document}
 
-% ============================================
-% PAGE DE TITRE
-% ============================================
 \begin{frame}
-    \titlepage
+\titlepage
 \end{frame}
 
-% ============================================
-% PLAN
-% ============================================
-\begin{frame}{Plan du cours}
-    \begin{columns}[T]
-        \begin{column}{0.48\textwidth}
-            \begin{block}{\textcolor{darkblue}{\textbf{PARTIE I}} — Variables explicatives}
-                \small
-                Variables qualitatives \textbf{à droite} de l'équation
-                \vspace{0.2cm}
-                \begin{itemize}
-                    \item Modèle sans terme constant
-                    \item Modèle avec terme constant
-                    \item Modèle avec variables explicatives
-                    \item Modèle avec produits croisés
-                \end{itemize}
-            \end{block}
-        \end{column}
-        \begin{column}{0.48\textwidth}
-            \begin{block}{\textcolor{darkgreen}{\textbf{PARTIE II}} — Variables expliquées}
-                \small
-                Variables qualitatives \textbf{à gauche} de l'équation
-                \vspace{0.2cm}
-                \begin{itemize}
-                    \item Variables dichotomiques
-                    \item Variables polytomiques ordonnées
-                    \item Variables de comptage
-                    \item Variables censurées/tronquées
-                \end{itemize}
-            \end{block}
-        \end{column}
-    \end{columns}
-    
-    \vspace{0.5cm}
-    
-    \begin{center}
-        \begin{tikzpicture}
-            \node[rectangle, draw=darkblue, fill=lightblue, rounded corners, minimum width=4cm, minimum height=0.8cm] (exp) at (0,0) {$y_i = f(\textcolor{darkblue}{D_i}, X_i) + u_i$};
-            \node[rectangle, draw=darkgreen, fill=green!10, rounded corners, minimum width=4cm, minimum height=0.8cm] (exq) at (7,0) {$\textcolor{darkgreen}{y_i} \in \{0,1,\ldots\}$};
-            \node at (0,-0.7) {\small Partie I};
-            \node at (7,-0.7) {\small Partie II};
-        \end{tikzpicture}
-    \end{center}
+\begin{frame}{Plan}
+\tableofcontents
 \end{frame}
 
-% ============================================
-% PARTIE I : VARIABLES QUALITATIVES EXPLICATIVES
-% ============================================
+%==============================================================================
+\section{Introduction}
+%==============================================================================
 
-{
-\setbeamercolor{background canvas}{bg=darkblue}
-\setbeamercolor{normal text}{fg=white}
-\usebeamercolor[fg]{normal text}
-\begin{frame}[plain]
-    \vfill
-    \begin{center}
-        {\Huge\bfseries PARTIE I}
-        
-        \vspace{1cm}
-        
-        {\LARGE Les variables qualitatives}
-        
-        \vspace{0.3cm}
-        
-        {\LARGE\bfseries EXPLICATIVES}
-        
-        \vspace{1.5cm}
-        
-        {\large Variables qualitatives à droite de l'équation}
-        
-        \vspace{0.3cm}
-        
-        {\large $y_i = f(\textcolor{orange}{D_i}, X_i) + u_i$}
-    \end{center}
-    \vfill
-\end{frame}
-}
+\begin{frame}{Introduction -- Contexte}
 
-\section{Les variables qualitatives explicatives}
-
-\begin{frame}{Introduction}
-    \begin{block}{Contexte}
-        Les variables qualitatives explicatives sont omniprésentes en économie appliquée :
-        \begin{itemize}
-            \item Économie du travail : genre, niveau de diplôme, catégorie socio-professionnelle
-            \item Économie de l'innovation : secteur d'activité, région, taille d'entreprise
-            \item Économie industrielle : appartenance à un groupe, type de marché
-        \end{itemize}
-    \end{block}
-    
-    \vspace{0.3cm}
-    
-    \begin{block}{Objectif}
-        Comprendre l'interprétation des coefficients des variables qualitatives dans le modèle linéaire et ses extensions.
-    \end{block}
-\end{frame}
-
-\begin{frame}{Deux utilisations principales}
-    \begin{enumerate}
-        \item \textbf{Effets fixes catégoriels} : indicatrices d'appartenance à un groupe
-        \begin{itemize}
-            \item Les coefficients s'interprètent comme des \alert{écarts moyens} par rapport à une modalité de référence
-            \item Ils ne représentent plus des dérivées (qui n'existent pas)
-        \end{itemize}
-        
-        \vspace{0.4cm}
-        
-        \item \textbf{Approximation de fonctions non linéaires} : 
-        \begin{itemize}
-            \item Découpage d'une variable continue en intervalles
-            \item Estimation d'une relation non paramétrique par morceaux
-        \end{itemize}
-    \end{enumerate}
-\end{frame}
-
-% --------------------------------------------
-
-\begin{frame}{Modèle sans terme constant : Formalisation}
-    \begin{definitionfr}[Variable qualitative polytomique]
-        Soit une variable qualitative à $p$ modalités. Pour un échantillon de $N$ individus, on définit les ensembles d'indices :
-        \[
-        G_j = \{i : \text{individu } i \text{ appartient au groupe } j\}, \quad j = 1, \ldots, p
-        \]
-        avec $\bigcup_{j=1}^{p} G_j = \{1, \ldots, N\}$ (partition).
-    \end{definitionfr}
-    
-    \vspace{0.3cm}
-    
-    \begin{definitionfr}[Indicatrices]
-        Les variables dichotomiques associées sont définies par :
-        \[
-        D_{ji} = \begin{cases}
-            1 & \text{si } i \in G_j \\
-            0 & \text{si } i \notin G_j
-        \end{cases}, \quad i = 1, \ldots, N
-        \]
-    \end{definitionfr}
-\end{frame}
-
-\begin{frame}{Propriétés fondamentales des indicatrices}
-    \begin{proprietefr}
-        Les variables indicatrices vérifient les propriétés suivantes :
-        \begin{enumerate}
-            \item \textbf{Idempotence} : $D_{ji}^2 = D_{ji}$ \quad (car $0^2 = 0$ et $1^2 = 1$)
-            
-            \vspace{0.2cm}
-            
-            \item \textbf{Exclusivité mutuelle} : $D_{ji} \cdot D_{ki} = 0$ pour tout $j \neq k$
-            
-            \vspace{0.2cm}
-            
-            \item \textbf{Effectif du groupe} : $\displaystyle\sum_{i=1}^{N} D_{ji} = N_j$
-            
-            \vspace{0.2cm}
-            
-            \item \textbf{Fréquence du groupe} : $\displaystyle\frac{1}{N} \sum_{i=1}^{N} D_{ji} = \frac{N_j}{N}$
-        \end{enumerate}
-    \end{proprietefr}
-    
-    \begin{remarquefr}
-        La propriété 4 montre que pour les indicatrices, la moyenne arithmétique calcule des pourcentages.
-    \end{remarquefr}
-\end{frame}
-
-\begin{frame}{Le modèle linéaire avec indicatrices}
-    \begin{block}{Spécification}
-        Le modèle linéaire s'écrit :
-        \[
-        y_i = \sum_{j=1}^{p} b_j D_{ji} + u_i, \quad i = 1, \ldots, N
-        \]
-        avec les hypothèses classiques sur les perturbations :
-        \[
-        \E(u_i) = 0, \quad \E(u_i^2) = \sigma_u^2, \quad \E(u_i u_j) = 0 \text{ pour } i \neq j
-        \]
-    \end{block}
-    
-    \vspace{0.3cm}
-    
-    \begin{propositionfr}[Interprétation des coefficients]
-        L'espérance conditionnelle dans le groupe $j$ est :
-        \[
-        \E(y_i \mid D) = b_j \quad \text{si } i \in G_j
-        \]
-        Les coefficients représentent donc les \alert{moyennes conditionnelles par groupe}.
-    \end{propositionfr}
-\end{frame}
-
-\begin{frame}{Différence entre groupes}
-    \begin{corollairefr}
-        La différence entre deux coefficients s'interprète comme la différence des espérances conditionnelles :
-        \[
-        b_j - b_k = \E(y_i \mid i \in G_j) - \E(y_i \mid i \in G_k)
-        \]
-    \end{corollairefr}
-    
-    \vspace{0.5cm}
-    
-    \begin{alertblock}{Distinction avec les variables quantitatives}
-        \begin{itemize}
-            \item Variables \textbf{quantitatives} : $b_j = \frac{\partial \E(y)}{\partial x_j}$ (dérivée)
-            \item Variables \textbf{qualitatives} : $b_j = \E(y \mid \text{groupe } j)$ (moyenne conditionnelle)
-        \end{itemize}
-    \end{alertblock}
-\end{frame}
-
-\begin{frame}{Écriture matricielle}
-    \begin{block}{Notation}
-        Pour chaque individu $i$, on définit le vecteur ligne :
-        \[
-        D_i = (D_{1i}, D_{2i}, \ldots, D_{pi})_{1 \times p}
-        \]
-        et le vecteur des paramètres :
-        \[
-        b = \begin{pmatrix} b_1 \\ b_2 \\ \vdots \\ b_p \end{pmatrix}_{p \times 1}
-        \]
-    \end{block}
-    
-    Le modèle individuel s'écrit :
-    \[
-    y_i = D_i b + u_i, \quad i = 1, \ldots, N
-    \]
-\end{frame}
-
-\begin{frame}{Estimateur des MCO : Dérivation (1/2)}
-    \begin{block}{Formule générale}
-        L'estimateur des MCO est :
-        \[
-        \hat{b} = \left( \sum_{i=1}^{N} D_i' D_i \right)^{-1} \sum_{i=1}^{N} D_i' y_i
-        \]
-    \end{block}
-    
-    \begin{block}{Calcul de $D_i' D_i$}
-        En utilisant l'idempotence et l'exclusivité mutuelle :
-        \[
-        D_i' D_i = \begin{pmatrix} D_{1i} \\ \vdots \\ D_{pi} \end{pmatrix} (D_{1i}, \ldots, D_{pi}) = \begin{pmatrix}
-            D_{1i} & 0 & \cdots & 0 \\
-            0 & D_{2i} & \cdots & 0 \\
-            \vdots & & \ddots & \vdots \\
-            0 & 0 & \cdots & D_{pi}
-        \end{pmatrix}
-        \]
-    \end{block}
-\end{frame}
-
-\begin{frame}{Estimateur des MCO : Dérivation (2/2)}
-    \begin{block}{Somme sur les individus}
-        \[
-        \sum_{i=1}^{N} D_i' D_i = \begin{pmatrix}
-            N_1 & 0 & \cdots & 0 \\
-            0 & N_2 & \cdots & 0 \\
-            \vdots & & \ddots & \vdots \\
-            0 & 0 & \cdots & N_p
-        \end{pmatrix}
-        \]
-        où $N_j = \sum_{i=1}^{N} D_{ji}$ est l'effectif du groupe $j$.
-    \end{block}
-    
-    \begin{theoremefr}[Estimateur MCO]
-        L'estimateur des MCO des coefficients est :
-        \[
-        \hat{b}_j = \frac{1}{N_j} \sum_{i \in G_j} y_i = \bar{y}_j
-        \]
-        C'est-à-dire la \alert{moyenne arithmétique de $y$ dans chaque groupe}.
-    \end{theoremefr}
-\end{frame}
-
-\begin{frame}{Démonstration détaillée}
-    \begin{proof}
-        Pour le second membre de l'estimateur :
-        \[
-        \sum_{i=1}^{N} D_i' y_i = \begin{pmatrix}
-            \sum_{i=1}^{N} D_{1i} y_i \\
-            \vdots \\
-            \sum_{i=1}^{N} D_{ji} y_i \\
-            \vdots \\
-            \sum_{i=1}^{N} D_{pi} y_i
-        \end{pmatrix} = \begin{pmatrix}
-            \sum_{i \in G_1} y_i \\
-            \vdots \\
-            \sum_{i \in G_j} y_i \\
-            \vdots \\
-            \sum_{i \in G_p} y_i
-        \end{pmatrix}
-        \]
-        
-        \vspace{0.2cm}
-        
-        En combinant avec l'inverse de la matrice diagonale :
-        \[
-        \hat{b} = \begin{pmatrix}
-            1/N_1 & & 0 \\
-            & \ddots & \\
-            0 & & 1/N_p
-        \end{pmatrix} \begin{pmatrix}
-            \sum_{i \in G_1} y_i \\
-            \vdots \\
-            \sum_{i \in G_p} y_i
-        \end{pmatrix} = \begin{pmatrix}
-            \bar{y}_1 \\
-            \vdots \\
-            \bar{y}_p
-        \end{pmatrix}
-        \]
-    \end{proof}
-\end{frame}
-
-% --------------------------------------------
-
-\begin{frame}{Le problème de la multicolinéarité parfaite}
-    \begin{alertblock}{Observation clé}
-        Le terme constant $e$ (vecteur unitaire) est égal à la somme des indicatrices :
-        \[
-        e = \sum_{j=1}^{p} D_j
-        \]
-        car tout individu appartient exactement à un groupe.
-    \end{alertblock}
-    
-    \vspace{0.3cm}
-    
-    \begin{block}{Conséquence}
-        Dans un modèle avec terme constant, il faut \alert{retirer une indicatrice} pour éviter la multicolinéarité parfaite. Cette modalité devient la \textbf{modalité de référence}.
-    \end{block}
-\end{frame}
-
-\begin{frame}{Modèle avec modalité de référence}
-    \begin{block}{Spécification}
-        Si l'on retire la modalité $k$, le modèle devient :
-        \[
-        y_i = c_0 + \sum_{j \neq k} c_j D_{ji} + u_i
-        \]
-    \end{block}
-    
-    \vspace{0.3cm}
-    
-    \begin{propositionfr}[Relation avec le modèle complet]
-        Les coefficients $c$ sont reliés aux coefficients $b$ du modèle sans constante par :
-        \begin{align*}
-            c_0 &= b_k \quad \text{(coefficient de la modalité de référence)} \\
-            c_j &= b_j - b_k \quad \text{pour } j \neq k \quad \text{(écart à la référence)}
-        \end{align*}
-    \end{propositionfr}
-\end{frame}
-
-\begin{frame}{Démonstration}
-    \begin{proof}
-        La prévision du modèle avec constante s'écrit :
-        \[
-        \hat{y} = c_0 e + \sum_{j \neq k} c_j D_j
-        \]
-        
-        En remplaçant $e = \sum_{j=1}^{p} D_j$ :
-        \begin{align*}
-            \hat{y} &= c_0 \sum_{j=1}^{p} D_j + \sum_{j \neq k} c_j D_j \\
-            &= (c_0 + c_1) D_1 + \cdots + c_0 D_k + \cdots + (c_0 + c_p) D_p
-        \end{align*}
-        
-        La prévision du modèle sans constante est $\hat{y} = \sum_{j=1}^{p} b_j D_j$.
-        
-        Par unicité de la décomposition, on identifie :
-        \[
-        c_0 + c_j = b_j \text{ pour } j \neq k \quad \text{et} \quad c_0 = b_k
-        \]
-    \end{proof}
-\end{frame}
-
-\begin{frame}{Interprétation des coefficients}
-    \begin{block}{Résumé}
-        \begin{center}
-            \begin{tabular}{ll}
-                \toprule
-                \textbf{Coefficient} & \textbf{Interprétation} \\
-                \midrule
-                $c_0$ & Moyenne du groupe de référence $k$ : $\E(y_i \mid i \in G_k)$ \\
-                $c_j$ & Écart par rapport à la référence : $\E(y_i \mid i \in G_j) - \E(y_i \mid i \in G_k)$ \\
-                \bottomrule
-            \end{tabular}
-        \end{center}
-    \end{block}
-    
-    \vspace{0.4cm}
-    
-    \begin{alertblock}{Importance pratique}
-        Il est \alert{indispensable} d'indiquer explicitement la modalité de référence retirée dans les tableaux de régression pour permettre une interprétation correcte des résultats.
-    \end{alertblock}
-\end{frame}
-
-\begin{frame}{Tests statistiques}
-    \begin{remarquefr}[Test de Fisher]
-        Le test de Fisher sur le modèle avec terme constant teste l'hypothèse :
-        \[
-        H_0 : c_1 = c_2 = \cdots = c_{k-1} = c_{k+1} = \cdots = c_p = 0
-        \]
-        Ce qui équivaut à :
-        \[
-        H_0 : \E(y_i \mid i \in G_j) = \E(y_i \mid i \in G_k) \quad \forall j \neq k
-        \]
-        C'est un \alert{test d'égalité des moyennes entre tous les groupes}.
-    \end{remarquefr}
-    
-    \vspace{0.3cm}
-    
-    \begin{remarquefr}[Test de Student]
-        Un test de Student sur $c_j$ teste l'égalité des moyennes entre le groupe $j$ et le groupe de référence $k$.
-    \end{remarquefr}
-\end{frame}
-
-% --------------------------------------------
-
-\begin{frame}{Extension avec variables quantitatives}
-    \begin{block}{Spécification}
-        On introduit une matrice de variables explicatives $X_i$ :
-        \[
-        y_i = X_i a + D_i b + u_i
-        \]
-        où $X_i$ est de dimension $(1 \times m)$ et $D_i$ de dimension $(1 \times p)$.
-    \end{block}
-    
-    \vspace{0.3cm}
-    
-    \begin{propositionfr}[Espérance conditionnelle]
-        L'espérance conditionnelle dans le groupe $j$ est :
-        \[
-        \E(y_i \mid X_i, D_{ji} = 1) = X_i a + b_j
-        \]
-    \end{propositionfr}
-\end{frame}
-
-\begin{frame}{Interprétation}
-    \begin{corollairefr}
-        La différence entre les groupes $j$ et $k$, \alert{à $X$ fixé}, est :
-        \begin{align*}
-            &\E(y_i \mid X_i, D_{ji} = 1) - \E(y_i \mid X_i, D_{ki} = 1) \\
-            &\quad = (X_i a + b_j) - (X_i a + b_k) = b_j - b_k
-        \end{align*}
-    \end{corollairefr}
-    
-    \vspace{0.4cm}
-    
-    \begin{block}{Conclusion}
-        Les résultats précédents restent valables :
-        \begin{itemize}
-            \item Le terme constant représente le coefficient de l'indicatrice retirée
-            \item Les autres coefficients mesurent l'écart à cette référence
-            \item Ces écarts sont \alert{contrôlés pour les autres variables} $X$
-        \end{itemize}
-    \end{block}
-\end{frame}
-
-% --------------------------------------------
-
-\begin{frame}{Motivation : Évaluation d'une politique}
-    \begin{block}{Contexte}
-        On étudie l'effet d'une mesure d'aide (affectée au hasard) sur une variable de performance $y_i$.
-    \end{block}
-    
-    \begin{definitionfr}[Indicatrice de traitement]
-        \[
-        D_i = \begin{cases}
-            1 & \text{si l'individu } i \text{ est aidé} \\
-            0 & \text{sinon}
-        \end{cases}
-        \]
-    \end{definitionfr}
-    
-    \begin{block}{Résultats potentiels}
-        Pour chaque individu, deux résultats potentiels :
-        \begin{itemize}
-            \item $y_{0i}$ : performance si l'individu $i$ n'est pas aidé
-            \item $y_{1i}$ : performance si l'individu $i$ est aidé
-        \end{itemize}
-    \end{block}
-\end{frame}
-
-\begin{frame}{Effet causal du traitement}
-    \begin{definitionfr}[Effet moyen du traitement]
-        L'effet causal recherché est :
-        \[
-        \delta = \E(y_{1i} - y_{0i})
-        \]
-        C'est la moyenne des variations de performance associées à la mesure.
-    \end{definitionfr}
-    
-    \vspace{0.3cm}
-    
-    \begin{block}{Modélisation des résultats potentiels}
-        On suppose :
-        \begin{align*}
-            y_{0i} &= a_0 + X_i c_0 + u_{0i} \\
-            y_{1i} &= a_1 + X_i c_1 + u_{1i}
-        \end{align*}
-        où $X_i$ représente les déterminants de la performance.
-    \end{block}
-\end{frame}
-
-\begin{frame}{Variable observable}
-    \begin{block}{Problème fondamental de l'inférence causale}
-        On n'observe que l'un des deux résultats potentiels :
-        \[
-        y_i = D_i \cdot y_{1i} + (1 - D_i) \cdot y_{0i} = \begin{cases}
-            y_{1i} & \text{si } D_i = 1 \\
-            y_{0i} & \text{si } D_i = 0
-        \end{cases}
-        \]
-    \end{block}
-    
-    \vspace{0.3cm}
-    
-    \begin{block}{Modèle économétrique}
-        En substituant :
-        \begin{align*}
-            y_i &= D_i(a_1 + X_i c_1 + u_{1i}) + (1-D_i)(a_0 + X_i c_0 + u_{0i}) \\
-            &= a_0 + X_i c_0 + D_i \underbrace{(a_1 - a_0)}_{a} + D_i X_i \underbrace{(c_1 - c_0)}_{c} + u_i
-        \end{align*}
-    \end{block}
-\end{frame}
-
-\begin{frame}{Modèle avec interactions}
-    \begin{theoremefr}[Modèle avec produits croisés]
-        Le modèle économétrique s'écrit :
-        \[
-        y_i = a_0 + X_i c_0 + D_i \cdot a + (D_i \otimes X_i) \cdot c + u_i
-        \]
-        où :
-        \begin{itemize}
-            \item $a = a_1 - a_0$ : effet du traitement à $X = 0$
-            \item $c = c_1 - c_0$ : modification des pentes par le traitement
-            \item $u_i = D_i u_{1i} + (1-D_i) u_{0i}$ : perturbation composite
-        \end{itemize}
-    \end{theoremefr}
-    
-    \vspace{0.3cm}
-    
-    \begin{alertblock}{Hétérogénéité des effets}
-        Ce modèle autorise une hétérogénéité de l'effet du traitement selon les caractéristiques $X_i$.
-    \end{alertblock}
-\end{frame}
-
-\begin{frame}{Rappel : Le produit de Kronecker}
-    \begin{definitionfr}[Produit de Kronecker]
-        Soient $A = (a_{ij})$ une matrice de dimension $(m \times n)$ et $B$ une matrice de dimension $(p \times q)$. Le \alert{produit de Kronecker} $A \otimes B$ est la matrice de dimension $(mp \times nq)$ définie par blocs :
-        \[
-        A \otimes B = \begin{pmatrix}
-            a_{11} B & a_{12} B & \cdots & a_{1n} B \\
-            a_{21} B & a_{22} B & \cdots & a_{2n} B \\
-            \vdots & \vdots & \ddots & \vdots \\
-            a_{m1} B & a_{m2} B & \cdots & a_{mn} B
-        \end{pmatrix}
-        \]
-    \end{definitionfr}
-
-    \vspace{0.3cm}
-
-    \begin{exemplefr}[Application aux indicatrices]
-        Avec $D_i = (D_{1i}, \ldots, D_{pi})$ vecteur $(1 \times p)$ et $X_i$ vecteur $(1 \times m)$ :
-        \[
-        D_i \otimes X_i = (D_{1i} X_i, D_{2i} X_i, \ldots, D_{pi} X_i)_{1 \times pm}
-        \]
-        Chaque bloc $D_{ji} X_i$ correspond aux variables $X$ \alert{multipliées par l'indicatrice} du groupe $j$.
-    \end{exemplefr}
-\end{frame}
-
-\begin{frame}{Calcul de l'effet moyen}
-    \begin{propositionfr}
-        L'effet du traitement est :
-        \[
-        \delta = \E(y_{1i} - y_{0i}) = (a_1 - a_0) + \E(X)(c_1 - c_0) = a + \E(X) c
-        \]
-    \end{propositionfr}
-    
-    \begin{block}{Estimation}
-        Un estimateur convergent est :
-        \[
-        \hat{\delta} = \hat{a} + \bar{X} \hat{c}
-        \]
-    \end{block}
-    
-    \begin{alertblock}{Astuce pratique}
-        Si les variables $X$ sont \alert{centrées} avant de calculer les produits croisés (i.e., $\bar{X} = 0$), alors :
-        \[
-        \hat{\delta} = \hat{a}
-        \]
-        L'effet moyen est directement donné par le coefficient de l'indicatrice.
-    \end{alertblock}
-\end{frame}
-
-\begin{frame}{Hétéroscédasticité induite}
-    \begin{remarquefr}[Structure de la variance]
-        La perturbation composite $u_i = D_i u_{1i} + (1-D_i) u_{0i}$ implique :
-        \[
-        \Var [u_i] = \begin{cases}
-            \Var[u_{0i}] & \text{si } D_i = 0 \\
-            \Var[u_{1i}] & \text{si } D_i = 1
-        \end{cases}
-        \]
-    \end{remarquefr}
-    
-    \vspace{0.3cm}
-    
-    \begin{alertblock}{Conséquence}
-        Si $\Var[u_{0i}] \neq \Var[u_{1i}]$, le modèle présente une \alert{hétéroscédasticité par bloc}. Dans ce cas :
-        \begin{itemize}
-            \item Les MCO restent convergents mais inefficaces
-            \item Il faut utiliser les \textbf{moindres carrés pondérés} ou les \textbf{écarts-types robustes}
-        \end{itemize}
-    \end{alertblock}
-\end{frame}
-
-\begin{frame}{Cas polytomique}
-    \begin{block}{Extension}
-        Avec $p$ groupes et des produits croisés :
-        \[
-        y_i = D_i b + (X_i \otimes D_i) c + u_i
-        \]
-        où le terme en $X$ seul est retiré car $\sum_{j=1}^{p} X_i D_{ji} = X_i$.
-    \end{block}
-    
-    \begin{propositionfr}
-        L'espérance conditionnelle dans le groupe $j$ devient :
-        \[
-        \E(y_i \mid X_i, D_{ji} = 1) = X_i c_j + b_j
-        \]
-        La différence entre groupes $j$ et $k$ est :
-        \[
-        \gamma_i = X_i(c_j - c_k) + (b_j - b_k)
-        \]
-        L'effet varie selon les caractéristiques individuelles $X_i$.
-    \end{propositionfr}
-\end{frame}
-
-\begin{frame}{Effet moyen et centrage}
-    \begin{theoremefr}
-        L'effet moyen est :
-        \[
-        \bar{\gamma} = \frac{1}{N} \sum_{i=1}^{N} \gamma_i = \bar{X}(c_j - c_k) + (b_j - b_k)
-        \]
-    \end{theoremefr}
-    
-    \vspace{0.3cm}
-    
-    \begin{corollairefr}[Méthode du centrage]
-        Si l'on centre $X$ avant de calculer les produits croisés ($\bar{X} = 0$), alors :
-        \[
-        \bar{\gamma} = b_j - b_k
-        \]
-        La différence de coefficients mesure directement l'écart moyen entre groupes, \alert{une fois éliminé l'effet des variables de $X$}.
-    \end{corollairefr}
-\end{frame}
-
-% ============================================
-% PARTIE II : VARIABLES QUALITATIVES EXPLIQUÉES
-% ============================================
-
-{
-\setbeamercolor{background canvas}{bg=darkgreen}
-\setbeamercolor{normal text}{fg=white}
-\usebeamercolor[fg]{normal text}
-\begin{frame}[plain]
-    \vfill
-    \begin{center}
-        {\Huge\bfseries PARTIE II}
-        
-        \vspace{1cm}
-        
-        {\LARGE Les variables qualitatives}
-        
-        \vspace{0.3cm}
-        
-        {\LARGE\bfseries EXPLIQUÉES}
-        
-        \vspace{1.5cm}
-        
-        {\large Variables qualitatives à gauche de l'équation}
-        
-        \vspace{0.3cm}
-        
-        {\large $\textcolor{orange}{y_i} \in \{0, 1, \ldots\} \quad \longleftarrow \quad f(X_i, \theta)$}
-    \end{center}
-    \vfill
-\end{frame}
-}
-
-\section{Les variables qualitatives expliquées}
-
-\begin{frame}{Introduction}
-    \begin{block}{Contexte}
-        Les bases de données microéconomiques contiennent fréquemment :
-        \begin{itemize}
-            \item Des données tronquées ou censurées
-            \item Des informations connues seulement par intervalle
-            \item Des variables purement qualitatives
-        \end{itemize}
-    \end{block}
-    
-    \vspace{0.3cm}
-    
-    \begin{exemplefr}
-        \begin{itemize}
-            \item Enquête Innovation (SESSI) : fait d'avoir innové, importance d'un déterminant
-            \item Enquête Emploi (INSEE) : statut d'emploi, heures travaillées (observées seulement si emploi)
-        \end{itemize}
-    \end{exemplefr}
-\end{frame}
-
-\begin{frame}{Classification des variables qualitatives expliquées}
-    \begin{center}
-        \begin{tikzpicture}[scale=0.75, every node/.style={transform shape},
-            box/.style={rectangle, draw=darkblue, fill=lightblue, text width=2.8cm, align=center, minimum height=0.8cm, rounded corners, font=\small},
-            arrow/.style={->, >=stealth, thick, darkblue}
-        ]
-        \node[box] (qual) at (0,0) {Variables qualitatives expliquées};
-        \node[box] (dicho) at (-6,-1.5) {Dichotomiques};
-        \node[box] (poly) at (-2,-1.5) {Polytomiques ordonnées};
-        \node[box] (count) at (2,-1.5) {Comptage};
-        \node[box] (cens) at (6,-1.5) {Censurées/Tronquées};
-
-        \draw[arrow] (qual) -- (dicho);
-        \draw[arrow] (qual) -- (poly);
-        \draw[arrow] (qual) -- (count);
-        \draw[arrow] (qual) -- (cens);
-        \end{tikzpicture}
-    \end{center}
-\end{frame}
-
-% --------------------------------------------
-
-\begin{frame}{Définition et codage}
-    \begin{definitionfr}[Variable dichotomique]
-        Une variable dichotomique ne peut prendre que deux modalités exclusives l'une de l'autre (Oui/Non, Supérieur/Inférieur à un seuil, etc.).
-        
-        \vspace{0.2cm}
-        
-        Par convention, on code :
-        \[
-        y_i = \begin{cases}
-            1 & \text{si l'événement se produit} \\
-            0 & \text{sinon}
-        \end{cases}
-        \]
-    \end{definitionfr}
-    
-    \begin{exemplefr}[Innovation]
-        \[
-        y_i = \begin{cases}
-            1 & \text{si l'entreprise } i \text{ a innové} \\
-            0 & \text{sinon}
-        \end{cases}
-        \]
-    \end{exemplefr}
-\end{frame}
-
-
-\begin{frame}{Objectif économétrique}
-    \begin{block}{Ce que l'on cherche à expliquer}
-        Les déterminants de la \alert{probabilité} que l'événement se produise :
-        \[
-        \Prob(y_i = 1 \mid X_i) = ?
-        \]
-        On cherche les variables qui augmentent ou réduisent cette probabilité.
-    \end{block}
-    
-    \vspace{0.3cm}
-    
-    \begin{block}{Idée}
-        On va construire un \textbf{modèle latent} (inobservable) qui représente le critère de décision sous-jacent.
-    \end{block}
-\end{frame}
-
-
-\begin{frame}{Le cadre : variable dépendante binaire}
-
-\textbf{Objectif :} Modéliser la probabilité qu'un événement se réalise.
-
-\medskip
-
-\textbf{Exemples :}
 \begin{itemize}
-    \item Participer au marché du travail ($Y_i = 1$) ou non ($Y_i = 0$)
-    \item Acheter un produit, faire défaut sur un crédit, voter pour un candidat...
+
+\item Les variables qualitatives explicatives sont omniprésentes en économie appliquée :
+  \begin{itemize}
+  \item Économie du travail : genre, niveau de diplôme, catégorie socio-professionnelle.
+  \item Économie de l'innovation : secteur d'activité, région, taille d'entreprise.
+  \item Économie industrielle : appartenance à un groupe, type de marché.
+  \end{itemize}
+
+\item \textbf{Objectif :} comprendre l'interprétation des coefficients des variables qualitatives dans le modèle linéaire et ses extensions.
+
 \end{itemize}
 
-\bigskip
+\end{frame}
 
-\textbf{Modèle de Probabilité Linéaire (MPL) :}
-\[
-Y_i = X_i'\beta + \varepsilon_i \quad \text{avec} \quad Y_i \in \{0, 1\}
-\]
+\begin{frame}{Introduction -- Utilisations}
 
-\medskip
+\begin{enumerate}
 
-On a :
-\[
-E[Y_i | X_i] = X_i'\beta = P(Y_i = 1 | X_i) \text{(loi de Bernoulli)} 
-\]
+\item \textbf{Effets fixes catégoriels} : indicatrices d'appartenance à un groupe.
+  \begin{itemize}
+  \item Les coefficients s'interprètent comme des \textbf{écarts moyens} par rapport à une modalité de référence.
+  \item Ils ne représentent plus des dérivées (qui n'existent pas).
+  \end{itemize}
 
-\bigskip
+\item \textbf{Approximation de fonctions non linéaires} :
+  \begin{itemize}
+  \item Découpage d'une variable continue en intervalles.
+  \item Estimation d'une relation non paramétrique par morceaux.
+  \end{itemize}
 
-\textcolor{red}{\textbf{Question :}} Peut-on estimer $\beta$ par MCO comme dans le modèle linéaire standard ?
+\end{enumerate}
+
+\end{frame}
+
+\begin{frame}{Introduction -- Vue d'ensemble}
+
+\begin{center}
+    \begin{tikzpicture}[scale=0.85, every node/.style={transform shape},
+        box/.style={rectangle, draw=darkblue, fill=lightblue, text width=5cm,
+                    align=center, minimum height=0.9cm, rounded corners}]
+        \node[box] (exp) at (0,0) {$y_i = f(\textcolor{darkblue}{D_i}, X_i) + u_i$};
+        \node[box, draw=darkgreen, fill=lightgreen] (exq) at (8,0) {$\textcolor{darkgreen}{y_i} \in \{0,1,\ldots\}$};
+        \node at (0,-0.8) {Variables qualitatives \textbf{explicatives}};
+        \node at (8,-0.8) {Variables qualitatives \textbf{expliquées}};
+    \end{tikzpicture}
+\end{center}
+
+\vspace{0.5cm}
+
+\begin{itemize}
+
+\item \textbf{Partie I} : variables qualitatives \textbf{à droite} de l'équation (indicatrices, modalité de référence, interactions, produits croisés).\newline
+
+\item \textbf{Partie II} : variables qualitatives \textbf{à gauche} de l'équation (dichotomiques, polytomiques ordonnées, comptage).
+
+\end{itemize}
 
 \end{frame}
 
 %==============================================================================
-\section{Problème 1 : Hétéroscédasticité structurelle}
+\section{Modèle sans terme constant}
 %==============================================================================
 
-\begin{frame}{Problème 1 : Hétéroscédasticité structurelle}
+\begin{frame}{Sans constante -- Formalisation}
 
-$Y_i | X_i$ suit une loi de \textbf{Bernoulli} de paramètre $p_i = X_i'\beta$.
+\begin{itemize}
 
-\bigskip
+\item Soit une variable qualitative à $p$ modalités. Pour un échantillon de $N$ individus, on définit les ensembles d'indices :
+  \[
+  G_j = \{i : \text{individu } i \text{ appartient au groupe } j\}, \quad j = 1, \ldots, p
+  \]
+  avec $\bigcup_{j=1}^{p} G_j = \{1, \ldots, N\}$ (partition).\newline
+
+\item Les variables indicatrices associées sont définies par :
+  \[
+  D_{ji} = \begin{cases}
+      1 & \text{si } i \in G_j \\
+      0 & \text{si } i \notin G_j
+  \end{cases}, \quad i = 1, \ldots, N
+  \]
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Sans constante -- Propriétés des indicatrices}
+
+Les variables indicatrices vérifient les propriétés suivantes :
+
+\begin{enumerate}
+
+\item \textbf{Idempotence} : $D_{ji}^2 = D_{ji}$ \quad (car $0^2 = 0$ et $1^2 = 1$).\newline
+
+\item \textbf{Exclusivité mutuelle} : $D_{ji} \cdot D_{ki} = 0$ pour tout $j \neq k$.\newline
+
+\item \textbf{Effectif du groupe} : $\displaystyle\sum_{i=1}^{N} D_{ji} = N_j$.\newline
+
+\item \textbf{Fréquence du groupe} : $\displaystyle\frac{1}{N} \sum_{i=1}^{N} D_{ji} = \frac{N_j}{N}$.
+
+\end{enumerate}
+
+\vspace{0.3cm}
+
+La propriété 4 montre que pour les indicatrices, la moyenne arithmétique calcule des pourcentages.
+
+\end{frame}
+
+\begin{frame}{Sans constante -- Modèle linéaire}
+
+\begin{itemize}
+
+\item Le modèle linéaire s'écrit :
+  \[
+  y_i = \sum_{j=1}^{p} b_j D_{ji} + u_i, \quad i = 1, \ldots, N
+  \]
+  avec les hypothèses classiques sur les perturbations :
+  \[
+  \E[u_i] = 0, \quad \E[u_i^2] = \sigma_u^2, \quad \E[u_i u_j] = 0 \text{ pour } i \neq j
+  \]\newline
+
+\item L'espérance conditionnelle dans le groupe $j$ est :
+  \[
+  \boxed{\E[y_i \mid D] = b_j \quad \text{si } i \in G_j}
+  \]
+  Les coefficients représentent les \textbf{moyennes conditionnelles par groupe}.
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Sans constante -- Différence entre groupes}
+
+\begin{itemize}
+
+\item La différence entre deux coefficients s'interprète comme la différence des espérances conditionnelles :
+  \[
+  b_j - b_k = \E[y_i \mid i \in G_j] - \E[y_i \mid i \in G_k]
+  \]\newline
+
+\item \textbf{Distinction avec les variables quantitatives} :
+  \begin{itemize}
+  \item Variables \textbf{quantitatives} : $b_j = \frac{\partial \E[y]}{\partial x_j}$ (dérivée).
+  \item Variables \textbf{qualitatives} : $b_j = \E[y \mid \text{groupe } j]$ (moyenne conditionnelle).
+  \end{itemize}
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Sans constante -- Écriture matricielle}
+
+\begin{itemize}
+
+\item Pour chaque individu $i$, on définit le vecteur ligne :
+  \[
+  D_i = (D_{1i}, D_{2i}, \ldots, D_{pi})_{1 \times p}
+  \]
+  et le vecteur des paramètres :
+  \[
+  b = \begin{pmatrix} b_1 \\ b_2 \\ \vdots \\ b_p \end{pmatrix}_{p \times 1}
+  \]\newline
+
+\item Le modèle individuel s'écrit :
+  \[
+  y_i = D_i b + u_i, \quad i = 1, \ldots, N
+  \]
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Sans constante -- MCO (1/2)}
+
+\begin{itemize}
+
+\item L'estimateur des MCO est :
+  \[
+  \hat{b} = \left( \sum_{i=1}^{N} D_i' D_i \right)^{-1} \sum_{i=1}^{N} D_i' y_i
+  \]\newline
+
+\item En utilisant l'idempotence et l'exclusivité mutuelle :
+  \[
+  D_i' D_i = \begin{pmatrix} D_{1i} \\ \vdots \\ D_{pi} \end{pmatrix} (D_{1i}, \ldots, D_{pi}) = \begin{pmatrix}
+      D_{1i} & 0 & \cdots & 0 \\
+      0 & D_{2i} & \cdots & 0 \\
+      \vdots & & \ddots & \vdots \\
+      0 & 0 & \cdots & D_{pi}
+  \end{pmatrix}
+  \]
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Sans constante -- MCO (2/2)}
+
+\begin{itemize}
+
+\item En sommant sur les individus :
+  \[
+  \sum_{i=1}^{N} D_i' D_i = \begin{pmatrix}
+      N_1 & 0 & \cdots & 0 \\
+      0 & N_2 & \cdots & 0 \\
+      \vdots & & \ddots & \vdots \\
+      0 & 0 & \cdots & N_p
+  \end{pmatrix}
+  \]
+  où $N_j = \sum_{i=1}^{N} D_{ji}$ est l'effectif du groupe $j$.\newline
+
+\item L'estimateur des MCO des coefficients est :
+  \[
+  \boxed{\hat{b}_j = \frac{1}{N_j} \sum_{i \in G_j} y_i = \bar{y}_j}
+  \]
+  C'est la \textbf{moyenne arithmétique de $y$ dans chaque groupe}.
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Sans constante -- Démonstration}
+
+Pour le second membre de l'estimateur :
+\[
+\sum_{i=1}^{N} D_i' y_i = \begin{pmatrix}
+    \sum_{i=1}^{N} D_{1i} y_i \\
+    \vdots \\
+    \sum_{i=1}^{N} D_{ji} y_i \\
+    \vdots \\
+    \sum_{i=1}^{N} D_{pi} y_i
+\end{pmatrix} = \begin{pmatrix}
+    \sum_{i \in G_1} y_i \\
+    \vdots \\
+    \sum_{i \in G_j} y_i \\
+    \vdots \\
+    \sum_{i \in G_p} y_i
+\end{pmatrix}
+\]
+
+En combinant avec l'inverse de la matrice diagonale :
+\[
+\hat{b} = \begin{pmatrix}
+    1/N_1 & & 0 \\
+    & \ddots & \\
+    0 & & 1/N_p
+\end{pmatrix} \begin{pmatrix}
+    \sum_{i \in G_1} y_i \\
+    \vdots \\
+    \sum_{i \in G_p} y_i
+\end{pmatrix} = \begin{pmatrix}
+    \bar{y}_1 \\
+    \vdots \\
+    \bar{y}_p
+\end{pmatrix}
+\]
+
+\end{frame}
+
+%==============================================================================
+\section{Modèle avec terme constant}
+%==============================================================================
+
+\begin{frame}{Avec constante -- Multicolinéarité}
+
+\begin{itemize}
+
+\item Le terme constant $e$ (vecteur unitaire) est égal à la somme des indicatrices :
+  \[
+  e = \sum_{j=1}^{p} D_j
+  \]
+  car tout individu appartient exactement à un groupe.\newline
+
+\item Dans un modèle avec terme constant, il faut \textbf{retirer une indicatrice} pour éviter la multicolinéarité parfaite. Cette modalité devient la \textbf{modalité de référence}.
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Avec constante -- Modalité de référence}
+
+\begin{itemize}
+
+\item Si l'on retire la modalité $k$, le modèle devient :
+  \[
+  y_i = c_0 + \sum_{j \neq k} c_j D_{ji} + u_i
+  \]\newline
+
+\item Les coefficients $c$ sont reliés aux coefficients $b$ du modèle sans constante par :
+  \begin{align*}
+      c_0 &= b_k \quad \text{(coefficient de la modalité de référence)} \\
+      c_j &= b_j - b_k \quad \text{pour } j \neq k \quad \text{(écart à la référence)}
+  \end{align*}
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Avec constante -- Démonstration}
+
+La prévision du modèle avec constante s'écrit :
+\[
+\hat{y} = c_0 e + \sum_{j \neq k} c_j D_j
+\]
+
+En remplaçant $e = \sum_{j=1}^{p} D_j$ :
+\begin{align*}
+    \hat{y} &= c_0 \sum_{j=1}^{p} D_j + \sum_{j \neq k} c_j D_j \\
+    &= (c_0 + c_1) D_1 + \cdots + c_0 D_k + \cdots + (c_0 + c_p) D_p
+\end{align*}
+
+La prévision du modèle sans constante est $\hat{y} = \sum_{j=1}^{p} b_j D_j$.
+
+Par unicité de la décomposition, on identifie :
+\[
+c_0 + c_j = b_j \text{ pour } j \neq k \quad \text{et} \quad c_0 = b_k
+\]
+
+\end{frame}
+
+\begin{frame}{Avec constante -- Interprétation}
+
+\begin{center}
+    \small
+    \renewcommand{\arraystretch}{1.3}
+    \begin{tabular}{ll}
+        \toprule
+        \textbf{Coefficient} & \textbf{Interprétation} \\
+        \midrule
+        $c_0$ & Moyenne du groupe de référence $k$ : $\E[y_i \mid i \in G_k]$ \\
+        $c_j$ & Écart par rapport à la référence : $\E[y_i \mid i \in G_j] - \E[y_i \mid i \in G_k]$ \\
+        \bottomrule
+    \end{tabular}
+\end{center}
+
+\vspace{0.5cm}
+
+Il est \textbf{indispensable} d'indiquer explicitement la modalité de référence retirée dans les tableaux de régression pour permettre une interprétation correcte des résultats.
+
+\end{frame}
+
+\begin{frame}{Avec constante -- Tests statistiques}
+
+\begin{itemize}
+
+\item \textbf{Test de Fisher.} Le test de Fisher sur le modèle avec terme constant teste l'hypothèse :
+  \[
+  H_0 : c_1 = c_2 = \cdots = c_{k-1} = c_{k+1} = \cdots = c_p = 0
+  \]
+  Ce qui équivaut à :
+  \[
+  H_0 : \E[y_i \mid i \in G_j] = \E[y_i \mid i \in G_k] \quad \forall j \neq k
+  \]
+  C'est un \textbf{test d'égalité des moyennes entre tous les groupes}.\newline
+
+\item \textbf{Test de Student.} Un test de Student sur $c_j$ teste l'égalité des moyennes entre le groupe $j$ et le groupe de référence $k$.
+
+\end{itemize}
+
+\end{frame}
+
+%==============================================================================
+\section{Extensions et interactions}
+%==============================================================================
+
+\begin{frame}{Extensions -- Variables quantitatives}
+
+\begin{itemize}
+
+\item On introduit une matrice de variables explicatives $X_i$ :
+  \[
+  y_i = X_i a + D_i b + u_i
+  \]
+  où $X_i$ est de dimension $(1 \times m)$ et $D_i$ de dimension $(1 \times p)$.\newline
+
+\item L'espérance conditionnelle dans le groupe $j$ est :
+  \[
+  \E[y_i \mid X_i, D_{ji} = 1] = X_i a + b_j
+  \]
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Extensions -- Interprétation}
+
+\begin{itemize}
+
+\item La différence entre les groupes $j$ et $k$, \textbf{à $X$ fixé}, est :
+  \begin{align*}
+      &\E[y_i \mid X_i, D_{ji} = 1] - \E[y_i \mid X_i, D_{ki} = 1] \\
+      &\quad = (X_i a + b_j) - (X_i a + b_k) = b_j - b_k
+  \end{align*}\newline
+
+\item Les résultats précédents restent valables :
+  \begin{itemize}
+  \item Le terme constant représente le coefficient de l'indicatrice retirée.
+  \item Les autres coefficients mesurent l'écart à cette référence.
+  \item Ces écarts sont \textbf{contrôlés pour les autres variables} $X$.
+  \end{itemize}
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Extensions -- Évaluation d'une politique}
+
+\begin{itemize}
+
+\item On étudie l'effet d'une mesure d'aide (affectée au hasard) sur une variable de performance $y_i$. L'indicatrice de traitement est :
+  \[
+  D_i = \begin{cases}
+      1 & \text{si l'individu } i \text{ est aidé} \\
+      0 & \text{sinon}
+  \end{cases}
+  \]\newline
+
+\item Pour chaque individu, deux \textbf{résultats potentiels} :
+  \begin{itemize}
+  \item $y_{0i}$ : performance si l'individu $i$ n'est pas aidé.
+  \item $y_{1i}$ : performance si l'individu $i$ est aidé.
+  \end{itemize}
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Extensions -- Effet causal}
+
+\begin{itemize}
+
+\item L'effet causal recherché est :
+  \[
+  \delta = \E[y_{1i} - y_{0i}]
+  \]
+  C'est la moyenne des variations de performance associées à la mesure.\newline
+
+\item On suppose :
+  \begin{align*}
+      y_{0i} &= a_0 + X_i c_0 + u_{0i} \\
+      y_{1i} &= a_1 + X_i c_1 + u_{1i}
+  \end{align*}
+  où $X_i$ représente les déterminants de la performance.
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Extensions -- Variable observable}
+
+\begin{itemize}
+
+\item On n'observe que l'un des deux résultats potentiels :
+  \[
+  y_i = D_i \cdot y_{1i} + (1 - D_i) \cdot y_{0i} = \begin{cases}
+      y_{1i} & \text{si } D_i = 1 \\
+      y_{0i} & \text{si } D_i = 0
+  \end{cases}
+  \]\newline
+
+\item En substituant :
+  \begin{align*}
+      y_i &= D_i(a_1 + X_i c_1 + u_{1i}) + (1-D_i)(a_0 + X_i c_0 + u_{0i}) \\
+      &= a_0 + X_i c_0 + D_i \underbrace{(a_1 - a_0)}_{a} + D_i X_i \underbrace{(c_1 - c_0)}_{c} + u_i
+  \end{align*}
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Extensions -- Modèle avec produits croisés}
+
+\begin{itemize}
+
+\item Le modèle économétrique s'écrit :
+  \[
+  \boxed{y_i = a_0 + X_i c_0 + D_i \cdot a + (D_i \otimes X_i) \cdot c + u_i}
+  \]
+  où :
+  \begin{itemize}
+  \item $a = a_1 - a_0$ : effet du traitement à $X = 0$.
+  \item $c = c_1 - c_0$ : modification des pentes par le traitement.
+  \item $u_i = D_i u_{1i} + (1-D_i) u_{0i}$ : perturbation composite.
+  \end{itemize}
+
+\item Ce modèle autorise une \textbf{hétérogénéité de l'effet du traitement} selon les caractéristiques $X_i$.
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Extensions -- Produit de Kronecker}
+
+\begin{itemize}
+
+\item Soient $A = (a_{ij})$ une matrice $(m \times n)$ et $B$ une matrice $(p \times q)$. Le \textbf{produit de Kronecker} $A \otimes B$ est la matrice $(mp \times nq)$ :
+  \[
+  A \otimes B = \begin{pmatrix}
+      a_{11} B & a_{12} B & \cdots & a_{1n} B \\
+      a_{21} B & a_{22} B & \cdots & a_{2n} B \\
+      \vdots & \vdots & \ddots & \vdots \\
+      a_{m1} B & a_{m2} B & \cdots & a_{mn} B
+  \end{pmatrix}
+  \]\newline
+
+\item Avec $D_i = (D_{1i}, \ldots, D_{pi})$ vecteur $(1 \times p)$ et $X_i$ vecteur $(1 \times m)$ :
+  \[
+  D_i \otimes X_i = (D_{1i} X_i, D_{2i} X_i, \ldots, D_{pi} X_i)_{1 \times pm}
+  \]
+  Chaque bloc $D_{ji} X_i$ correspond aux variables $X$ \textbf{multipliées par l'indicatrice} du groupe $j$.
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Extensions -- Effet moyen}
+
+\begin{itemize}
+
+\item L'effet du traitement est :
+  \[
+  \delta = \E[y_{1i} - y_{0i}] = (a_1 - a_0) + \E[X](c_1 - c_0) = a + \E[X] c
+  \]
+  Un estimateur convergent est $\hat{\delta} = \hat{a} + \bar{X} \hat{c}$.\newline
+
+\item Si les variables $X$ sont \textbf{centrées} avant de calculer les produits croisés (i.e., $\bar{X} = 0$), alors :
+  \[
+  \boxed{\hat{\delta} = \hat{a}}
+  \]
+  L'effet moyen est directement donné par le coefficient de l'indicatrice.
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Extensions -- Hétéroscédasticité}
+
+\begin{itemize}
+
+\item La perturbation composite $u_i = D_i u_{1i} + (1-D_i) u_{0i}$ implique :
+  \[
+  \Var[u_i] = \begin{cases}
+      \Var[u_{0i}] & \text{si } D_i = 0 \\
+      \Var[u_{1i}] & \text{si } D_i = 1
+  \end{cases}
+  \]\newline
+
+\item Si $\Var[u_{0i}] \neq \Var[u_{1i}]$, le modèle présente une \textbf{hétéroscédasticité par bloc}. Dans ce cas :
+  \begin{itemize}
+  \item Les MCO restent convergents mais inefficaces.
+  \item Il faut utiliser les \textbf{moindres carrés pondérés} ou les \textbf{écarts-types robustes}.
+  \end{itemize}
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Extensions -- Cas polytomique}
+
+\begin{itemize}
+
+\item Avec $p$ groupes et des produits croisés :
+  \[
+  y_i = D_i b + (X_i \otimes D_i) c + u_i
+  \]
+  où le terme en $X$ seul est retiré car $\sum_{j=1}^{p} X_i D_{ji} = X_i$.\newline
+
+\item L'espérance conditionnelle dans le groupe $j$ devient :
+  \[
+  \E[y_i \mid X_i, D_{ji} = 1] = X_i c_j + b_j
+  \]
+  La différence entre groupes $j$ et $k$ est :
+  \[
+  \gamma_i = X_i(c_j - c_k) + (b_j - b_k)
+  \]
+  L'effet varie selon les caractéristiques individuelles $X_i$.
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Extensions -- Centrage}
+
+\begin{itemize}
+
+\item L'effet moyen est :
+  \[
+  \bar{\gamma} = \frac{1}{N} \sum_{i=1}^{N} \gamma_i = \bar{X}(c_j - c_k) + (b_j - b_k)
+  \]\newline
+
+\item Si l'on centre $X$ avant de calculer les produits croisés ($\bar{X} = 0$), alors :
+  \[
+  \boxed{\bar{\gamma} = b_j - b_k}
+  \]
+  La différence de coefficients mesure directement l'écart moyen entre groupes, \textbf{une fois éliminé l'effet des variables de $X$}.
+
+\end{itemize}
+
+\end{frame}
+
+%==============================================================================
+\section{Variables dichotomiques}
+%==============================================================================
+
+\begin{frame}{Dichotomiques -- Contexte}
+
+\begin{itemize}
+
+\item Les bases de données microéconomiques contiennent fréquemment :
+  \begin{itemize}
+  \item Des données tronquées ou censurées.
+  \item Des informations connues seulement par intervalle.
+  \item Des variables purement qualitatives.
+  \end{itemize}
+
+\item \textbf{Exemples :}
+  \begin{itemize}
+  \item Enquête Innovation (SESSI) : fait d'avoir innové, importance d'un déterminant.
+  \item Enquête Emploi (INSEE) : statut d'emploi, heures travaillées (observées seulement si emploi).
+  \end{itemize}
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Dichotomiques -- Classification}
+
+\begin{center}
+    \begin{tikzpicture}[scale=0.65, every node/.style={transform shape},
+        box/.style={rectangle, draw=darkblue, fill=lightblue, text width=3.2cm, align=center, minimum height=0.8cm, rounded corners, font=\small},
+        arrow/.style={->, >=stealth, thick, darkblue}
+    ]
+    \node[box] (qual) at (0,0) {Variables qualitatives expliquées};
+    \node[box] (dicho) at (-5.5,-1.5) {Dichotomiques};
+    \node[box] (poly) at (-1.8,-1.5) {Polytomiques ordonnées};
+    \node[box] (count) at (1.8,-1.5) {Comptage};
+    \node[box] (cens) at (5.5,-1.5) {Censurées/Tronquées};
+
+    \draw[arrow] (qual) -- (dicho);
+    \draw[arrow] (qual) -- (poly);
+    \draw[arrow] (qual) -- (count);
+    \draw[arrow] (qual) -- (cens);
+    \end{tikzpicture}
+\end{center}
+
+\end{frame}
+
+\begin{frame}{Dichotomiques -- Définition}
+
+\begin{itemize}
+
+\item Une variable dichotomique ne peut prendre que deux modalités exclusives l'une de l'autre (Oui/Non, Supérieur/Inférieur à un seuil, etc.). Par convention :
+  \[
+  y_i = \begin{cases}
+      1 & \text{si l'événement se produit} \\
+      0 & \text{sinon}
+  \end{cases}
+  \]\newline
+
+\item \textbf{Exemple (Innovation) :}
+  \[
+  y_i = \begin{cases}
+      1 & \text{si l'entreprise } i \text{ a innové} \\
+      0 & \text{sinon}
+  \end{cases}
+  \]
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Dichotomiques -- Objectif}
+
+\begin{itemize}
+
+\item On cherche à expliquer les déterminants de la \textbf{probabilité} que l'événement se produise :
+  \[
+  \Prob(y_i = 1 \mid X_i) = \text{?}
+  \]
+  On cherche les variables qui augmentent ou réduisent cette probabilité.\newline
+
+\item \textbf{Idée :} on va construire un \textbf{modèle latent} (inobservable) qui représente le critère de décision sous-jacent.
+
+\end{itemize}
+
+\end{frame}
+
+%==============================================================================
+\section{Le modèle de probabilité linéaire}
+%==============================================================================
+
+\begin{frame}{MPL -- Spécification}
+
+\begin{itemize}
+
+\item \textbf{Exemples de variables dépendantes binaires :} participer au marché du travail ($Y_i = 1$) ou non ($Y_i = 0$), acheter un produit, faire défaut sur un crédit, voter pour un candidat...\newline
+
+\item Le \textbf{modèle de probabilité linéaire} (MPL) :
+  \[
+  Y_i = X_i'\beta + \varepsilon_i \quad \text{avec} \quad Y_i \in \{0, 1\}
+  \]
+  On a :
+  \[
+  \E[Y_i \mid X_i] = X_i'\beta = \Prob(Y_i = 1 \mid X_i) \quad \text{(loi de Bernoulli)}
+  \]\newline
+
+\item \textbf{Question :} peut-on estimer $\beta$ par MCO comme dans le modèle linéaire standard ?
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{MPL -- Hétéroscédasticité structurelle}
+
+$Y_i \mid X_i$ suit une loi de \textbf{Bernoulli} de paramètre $p_i = X_i'\beta$.
+
+\vspace{0.3cm}
 
 \textbf{Variance conditionnelle :}
 \[
-\text{Var}(Y_i | X_i) = p_i(1-p_i) = X_i'\beta \cdot (1 - X_i'\beta)
+\Var[Y_i \mid X_i] = p_i(1-p_i) = X_i'\beta \cdot (1 - X_i'\beta)
 \]
-
-\bigskip
 
 \begin{center}
 \begin{tikzpicture}[scale=0.9]
 \begin{axis}[
     width=10cm, height=5cm,
     xlabel={$p = X'\beta$},
-    ylabel={$\text{Var}(Y|X) = p(1-p)$},
+    ylabel={$\Var[Y \mid X] = p(1-p)$},
     xmin=0, xmax=1,
     ymin=0, ymax=0.3,
     grid=major,
@@ -915,112 +816,74 @@ $Y_i | X_i$ suit une loi de \textbf{Bernoulli} de paramètre $p_i = X_i'\beta$.
 ]
 \addplot[domain=0:1, samples=100, blue, very thick] {x*(1-x)};
 \addplot[dashed, red] coordinates {(0.5,0) (0.5,0.25)};
-\node at (axis cs:0.5,0.27) {\small max = 0.25};
+\node at (axis cs:0.5,0.27) {\small max = 0,25};
 \end{axis}
 \end{tikzpicture}
 \end{center}
 
-\medskip
-
-$\Rightarrow$ La variance \textbf{dépend de $X_i$} : hétéroscédasticité \textbf{inhérente} au modèle.
+La variance \textbf{dépend de $X_i$} : hétéroscédasticité \textbf{inhérente} au modèle.
 
 \end{frame}
 
-\begin{frame}{Conséquences de l'hétéroscédasticité}
+\begin{frame}{MPL -- Conséquences de l'hétéroscédasticité}
 
-\textbf{Rappel :} Sous hétéroscédasticité, l'estimateur MCO reste sans biais et convergent, mais :
-
-\bigskip
+Sous hétéroscédasticité, l'estimateur MCO reste sans biais et convergent, mais :
 
 \begin{enumerate}
-    \item \textbf{Inefficacité :} $\hat{\beta}_{MCO}$ n'est plus BLUE (Best Linear Unbiased Estimator)
 
-    \bigskip
+\item \textbf{Inefficacité :} $\hat{\beta}_{\text{MCO}}$ n'est plus BLUE (Best Linear Unbiased Estimator).\newline
 
-    \item \textbf{Inférence invalide :} La matrice de variance usuelle
-    \[
-    \widehat{\text{Var}}(\hat{\beta}) = \hat{\sigma}^2 (X'X)^{-1}
-    \]
-    est \textbf{incorrecte}. Les tests $t$ et $F$ ne sont plus valides.
+\item \textbf{Inférence invalide :} la matrice de variance usuelle $\widehat{\Var}(\hat{\beta}) = \hat{\sigma}^2 (X'X)^{-1}$ est \textbf{incorrecte}. Les tests $t$ et $F$ ne sont plus valides.\newline
 
-    \bigskip
+\item \textbf{Solution partielle :} utiliser les écarts-types robustes de White (HC) :
+  \[
+  \widehat{\Var}_{\text{HC}}(\hat{\beta}) = (X'X)^{-1} \left( \sum_{i=1}^n \hat{\varepsilon}_i^2 x_i x_i' \right) (X'X)^{-1}
+  \]
 
-    \item \textbf{Solution partielle :} Utiliser les écarts-types robustes de White (HC)
-    \[
-    \widehat{\text{Var}}_{HC}(\hat{\beta}) = (X'X)^{-1} \left( \sum_{i=1}^n \hat{\varepsilon}_i^2 x_i x_i' \right) (X'X)^{-1}
-    \]
 \end{enumerate}
-
-\bigskip
-
-\textcolor{orange}{\textbf{Mais cela ne résout pas les autres problèmes...}}
 
 \end{frame}
 
-%==============================================================================
-\section{Problème 2 : Prédictions hors de [0,1]}
-%==============================================================================
-
-\begin{frame}{Problème 2 : Prédictions hors de $[0,1]$}
+\begin{frame}{MPL -- Prédictions hors de $[0,1]$}
 
 Le modèle linéaire n'impose \textbf{aucune contrainte} sur $\hat{Y}_i = X_i'\hat{\beta}$.
 
-\bigskip
-
 \begin{center}
-\begin{tikzpicture}[scale=0.85]
+\begin{tikzpicture}[scale=0.8]
 \begin{axis}[
-    width=12cm, height=6cm,
+    width=12cm, height=5.5cm,
     xlabel={Variable explicative $X$},
-    ylabel={$P(Y=1|X)$},
+    ylabel={$\Prob(Y=1 \mid X)$},
     xmin=-2, xmax=6,
     ymin=-0.3, ymax=1.3,
     grid=major,
     thick,
     legend pos=south east
 ]
-% Données simulées (points)
 \addplot[only marks, mark=*, mark size=2pt, blue!70] coordinates {
     (-1,0) (-0.5,0) (0,0) (0.3,0) (0.5,0) (0.8,0) (1,0) (1.2,0) (1.5,1)
     (1.8,0) (2,1) (2.2,1) (2.5,0) (2.8,1) (3,1) (3.2,1) (3.5,1) (3.8,1)
     (4,1) (4.2,1) (4.5,1) (5,1) (5.5,1)
 };
-
-% Droite MCO
 \addplot[domain=-2:6, samples=100, red, very thick] {0.1 + 0.2*x};
-
-% Zone problématique < 0
 \fill[red!20, opacity=0.5] (axis cs:-2,-0.3) rectangle (axis cs:-0.5,0);
-
-% Zone problématique > 1
 \fill[red!20, opacity=0.5] (axis cs:4.5,1) rectangle (axis cs:6,1.3);
-
-% Lignes de référence
 \addplot[dashed, black, thick] coordinates {(-2,0) (6,0)};
 \addplot[dashed, black, thick] coordinates {(-2,1) (6,1)};
-
 \node[red] at (axis cs:-1.2,-0.15) {\small $\hat{P} < 0$ !};
 \node[red] at (axis cs:5.3,1.15) {\small $\hat{P} > 1$ !};
-
-\legend{Observations, MPL : $\hat{Y} = 0.1 + 0.2X$}
+\legend{Observations, MPL : $\hat{Y} = 0{,}1 + 0{,}2X$}
 \end{axis}
 \end{tikzpicture}
 \end{center}
 
-\medskip
-
-$\Rightarrow$ Des \textbf{probabilités négatives} ou \textbf{supérieures à 1} : absurde !
+Des \textbf{probabilités négatives} ou \textbf{supérieures à 1} : absurde !
 
 \end{frame}
 
-%==============================================================================
-\section{Problème 3 : Non-normalité des résidus}
-%==============================================================================
-
-\begin{frame}{Problème 3 : Non-normalité des résidus}
+\begin{frame}{MPL -- Non-normalité des résidus}
 
 Les résidus ne peuvent prendre que \textbf{deux valeurs} :
-
 \[
 \varepsilon_i = Y_i - X_i'\beta =
 \begin{cases}
@@ -1029,12 +892,10 @@ Les résidus ne peuvent prendre que \textbf{deux valeurs} :
 \end{cases}
 \]
 
-\bigskip
-
 \begin{center}
-\begin{tikzpicture}[scale=0.85]
+\begin{tikzpicture}[scale=0.8]
 \begin{axis}[
-    width=10cm, height=5.5cm,
+    width=10cm, height=4.5cm,
     xlabel={Résidu $\varepsilon$},
     ylabel={Fréquence},
     ybar,
@@ -1047,60 +908,48 @@ Les résidus ne peuvent prendre que \textbf{deux valeurs} :
     yticklabels={$1-p$, $p$},
     grid=major,
     thick,
-    title={Distribution des résidus (exemple : $p = X'\beta = 0.6$)}
+    title={Distribution des résidus (exemple : $p = X'\beta = 0{,}6$)}
 ]
 \addplot[fill=blue!50] coordinates {(-0.6, 0.4) (0.4, 0.6)};
 \end{axis}
 \end{tikzpicture}
 \end{center}
 
-\medskip
-
-$\Rightarrow$ Distribution \textbf{bimodale}, clairement \textbf{non-gaussienne}.
-
-\smallskip
-
-$\Rightarrow$ Les tests $t$ et $F$ (basés sur la normalité) sont invalides en \textbf{échantillon fini}.
+Distribution \textbf{bimodale}, clairement \textbf{non-gaussienne}. Les tests $t$ et $F$ sont invalides en \textbf{échantillon fini}.
 
 \end{frame}
 
-%==============================================================================
-\section{Problème 4 : Effets marginaux constants}
-%==============================================================================
-
-\begin{frame}{Problème 4 : Effets marginaux constants (irréalistes)}
+\begin{frame}{MPL -- Effets marginaux constants}
 
 Dans le MPL, l'effet marginal est \textbf{constant} :
 \[
-\frac{\partial P(Y=1|X)}{\partial X_k} = \beta_k \quad \forall X
+\frac{\partial \Prob(Y=1 \mid X)}{\partial X_k} = \beta_k \quad \forall X
 \]
 
-\bigskip
-
-\textbf{Problème conceptuel :}
+\vspace{0.3cm}
 
 \begin{itemize}
-    \item Passer de $P = 0.01$ à $P = 0.06$ : effet faible (événement rare reste rare)
-    \item Passer de $P = 0.47$ à $P = 0.52$ : effet fort (basculement de majorité)
-    \item Passer de $P = 0.94$ à $P = 0.99$ : effet faible (quasi-certitude confirmée)
+
+\item Passer de $P = 0{,}01$ à $P = 0{,}06$ : effet faible (événement rare reste rare).\newline
+
+\item Passer de $P = 0{,}47$ à $P = 0{,}52$ : effet fort (basculement de majorité).\newline
+
+\item Passer de $P = 0{,}94$ à $P = 0{,}99$ : effet faible (quasi-certitude confirmée).
+
 \end{itemize}
 
-\bigskip
+\vspace{0.3cm}
 
-$\Rightarrow$ L'effet d'une variable devrait \textbf{s'atténuer aux extrêmes} (saturation).
-
-\bigskip
-
-\textcolor{blue}{\textbf{Intuition :}} Augmenter le revenu de quelqu'un qui a déjà 99\% de chances d'acheter une maison n'aura presque aucun effet sur sa probabilité d'achat.
+L'effet d'une variable devrait \textbf{s'atténuer aux extrêmes} (saturation).
 
 \end{frame}
 
-\begin{frame}{Comparaison des effets marginaux}
+\begin{frame}{MPL -- Comparaison des effets marginaux}
 
 \begin{center}
 \begin{tikzpicture}[scale=0.85]
 \begin{axis}[
-    width=12cm, height=6cm,
+    width=12cm, height=5.5cm,
     xlabel={$X'\beta$},
     ylabel={Effet marginal},
     xmin=-4, xmax=4,
@@ -1109,441 +958,394 @@ $\Rightarrow$ L'effet d'une variable devrait \textbf{s'atténuer aux extrêmes} 
     thick,
     legend pos=north east
 ]
-% MPL : constant
 \addplot[domain=-4:4, samples=100, red, very thick] {0.25};
-
-% Probit : densité normale
 \addplot[domain=-4:4, samples=100, blue, very thick] {exp(-x^2/2)/sqrt(2*pi)};
-
-% Logit : f(x) = exp(x)/(1+exp(x))^2
 \addplot[domain=-4:4, samples=100, green!60!black, very thick, dashed] {exp(x)/(1+exp(x))^2};
-
 \legend{MPL (constant), Probit $\phi(X'\beta)$, Logit $\Lambda'(X'\beta)$}
 \end{axis}
 \end{tikzpicture}
 \end{center}
 
-\medskip
-
-\textbf{Modèles non-linéaires :} L'effet marginal est maximal au centre ($P \approx 0.5$) et tend vers 0 aux extrêmes $\Rightarrow$ \textbf{effet de saturation} réaliste.
+\textbf{Modèles non-linéaires :} l'effet marginal est maximal au centre ($P \approx 0{,}5$) et tend vers 0 aux extrêmes (effet de \textbf{saturation} réaliste).
 
 \end{frame}
 
-%==============================================================================
-\section{Récapitulatif et solution}
-%==============================================================================
-
-\begin{frame}{Récapitulatif : limites du MPL}
+\begin{frame}{MPL -- Récapitulatif}
 
 \begin{center}
-\renewcommand{\arraystretch}{1.4}
-\begin{tabular}{|l|c|c|}
-\hline
-\textbf{Problème} & \textbf{Conséquence} & \textbf{Gravité} \\
-\hline
-Hétéroscédasticité structurelle & Inférence invalide & Moyenne \\
-& (corrigeable par HC) & \\
-\hline
-Prédictions hors $[0,1]$ & Probabilités absurdes & \textcolor{red}{Élevée} \\
-\hline
-Résidus non-normaux & Tests invalides & Moyenne \\
-& (asymptotiquement OK) & \\
-\hline
-Effets marginaux constants & Modèle mal spécifié & \textcolor{red}{Élevée} \\
-\hline
-\end{tabular}
+    \small
+    \renewcommand{\arraystretch}{1.3}
+    \begin{tabular}{lcc}
+        \toprule
+        \textbf{Problème} & \textbf{Conséquence} & \textbf{Gravité} \\
+        \midrule
+        Hétéroscédasticité structurelle & Inférence invalide (corrigeable HC) & Moyenne \\
+        Prédictions hors $[0,1]$ & Probabilités absurdes & \textcolor{darkred}{Élevée} \\
+        Résidus non-normaux & Tests invalides (asympt. OK) & Moyenne \\
+        Effets marginaux constants & Modèle mal spécifié & \textcolor{darkred}{Élevée} \\
+        \bottomrule
+    \end{tabular}
 \end{center}
 
-\bigskip
+\vspace{0.5cm}
 
-\textbf{Conclusion :} Le MPL peut être utilisé comme \textbf{approximation rapide} pour des probabilités proches de 0.5, mais il est \textbf{inadapté} pour une modélisation rigoureuse.
+Le MPL peut être utilisé comme \textbf{approximation rapide} pour des probabilités proches de 0,5, mais il est \textbf{inadapté} pour une modélisation rigoureuse.
 
 \end{frame}
 
-\begin{frame}{Solution : les modèles à variable latente}
+%==============================================================================
+\section{Modèles à variable latente}
+%==============================================================================
 
-\textbf{Idée :} Introduire une variable latente $Y_i^*$ continue :
-\[
-Y_i^* = X_i'\beta + \varepsilon_i, \qquad Y_i = \mathbf{1}(Y_i^* > 0)
-\]
+\begin{frame}{Variable latente -- Principe}
 
-\bigskip
-
-Si $\varepsilon_i \sim F$ (fonction de répartition), alors :
-\[
-P(Y_i = 1 | X_i) = P(Y_i^* > 0 | X_i) = P(\varepsilon_i > -X_i'\beta) = F(X_i'\beta)
-\]
-
-\bigskip
-
-\textbf{Choix classiques :}
 \begin{itemize}
-    \item $F = \Phi$ (normale standard) $\Rightarrow$ \textbf{Modèle Probit}
-    \item $F = \Lambda$ (logistique) $\Rightarrow$ \textbf{Modèle Logit}
+
+\item On introduit une variable latente $Y_i^*$ continue :
+  \[
+  Y_i^* = X_i'\beta + \varepsilon_i, \qquad Y_i = \mathbf{1}(Y_i^* > 0)
+  \]\newline
+
+\item Si $\varepsilon_i \sim F$ (fonction de répartition), alors :
+  \[
+  \Prob(Y_i = 1 \mid X_i) = \Prob(Y_i^* > 0 \mid X_i) = \Prob(\varepsilon_i > -X_i'\beta) = F(X_i'\beta)
+  \]\newline
+
+\item \textbf{Choix classiques :}
+  \begin{itemize}
+  \item $F = \Phi$ (normale standard) $\Rightarrow$ \textbf{Modèle Probit}.
+  \item $F = \Lambda$ (logistique) $\Rightarrow$ \textbf{Modèle Logit}.
+  \end{itemize}
+
 \end{itemize}
 
-\bigskip
+\end{frame}
 
-\textbf{Propriétés :}
+\begin{frame}{Variable latente -- Propriétés}
+
 \begin{enumerate}
-    \item $F(X'\beta) \in [0,1]$ par construction
-    \item Effets marginaux décroissants aux extrêmes : $\frac{\partial P}{\partial X_k} = f(X'\beta) \cdot \beta_k$
-    \item Estimation par \textbf{maximum de vraisemblance}
+
+\item $F(X'\beta) \in [0,1]$ par construction.\newline
+
+\item Effets marginaux décroissants aux extrêmes : $\frac{\partial P}{\partial X_k} = f(X'\beta) \cdot \beta_k$.\newline
+
+\item Estimation par \textbf{maximum de vraisemblance}.
+
 \end{enumerate}
 
 \end{frame}
 
-\begin{frame}{Comparaison graphique : MPL vs Probit/Logit}
+\begin{frame}{Variable latente -- Comparaison graphique}
 
 \begin{center}
 \begin{tikzpicture}[scale=0.85]
 \begin{axis}[
-    width=12cm, height=6.5cm,
+    width=12cm, height=6cm,
     xlabel={$X'\beta$},
-    ylabel={$P(Y=1|X)$},
+    ylabel={$\Prob(Y=1 \mid X)$},
     xmin=-4, xmax=4,
     ymin=-0.2, ymax=1.2,
     grid=major,
     thick,
     legend pos=south east
 ]
-
-% MPL
 \addplot[domain=-4:4, samples=100, red, very thick] {0.5 + 0.25*x};
 \addlegendentry{MPL}
-
-% Probit (approximation de Phi)
 \addplot[domain=-4:4, samples=200, blue, very thick] {1/(1+exp(-1.7*x))};
 \addlegendentry{Probit}
-
-
-% Logit
 \addplot[domain=-4:4, samples=200, green!60!black, very thick, dashed] {1/(1+exp(-x))};
 \addlegendentry{Logit}
-
-% Limites 0 et 1
 \addplot[dashed, black, thin] coordinates {(-4,0) (4,0)};
 \addplot[dashed, black, thin] coordinates {(-4,1) (4,1)};
-
-
-
-% Zones problématiques
 \node[red] at (axis cs:-3,-0.1) {\small Impossible};
 \node[red] at (axis cs:3,1.1) {\small Impossible};
-
 \end{axis}
 \end{tikzpicture}
 \end{center}
 
-\medskip
-
-$\Rightarrow$ Les modèles Probit et Logit garantissent $P \in [0,1]$ et capturent la \textbf{saturation} aux extrêmes.
+Les modèles Probit et Logit garantissent $P \in [0,1]$ et capturent la \textbf{saturation} aux extrêmes.
 
 \end{frame}
 
+\begin{frame}{Variable latente -- Résumé}
 
-\begin{frame}{Résumé}
-
-\textbf{Le Modèle de Probabilité Linéaire (MCO sur $Y$ binaire) :}
+\textbf{Le modèle de probabilité linéaire (MCO sur $Y$ binaire) :}
 
 \begin{itemize}
-    \item[\textcolor{green!60!black}{\checkmark}] Simple à estimer et interpréter
-    \item[\textcolor{green!60!black}{\checkmark}] Peut servir d'approximation locale
-    \item[\textcolor{red}{$\times$}] Hétéroscédasticité structurelle
-    \item[\textcolor{red}{$\times$}] Prédictions hors de $[0,1]$
-    \item[\textcolor{red}{$\times$}] Effets marginaux constants (irréalistes)
+\item[\textcolor{darkgreen}{\checkmark}] Simple à estimer et interpréter.
+\item[\textcolor{darkgreen}{\checkmark}] Peut servir d'approximation locale.
+\item[\textcolor{darkred}{$\times$}] Hétéroscédasticité structurelle.
+\item[\textcolor{darkred}{$\times$}] Prédictions hors de $[0,1]$.
+\item[\textcolor{darkred}{$\times$}] Effets marginaux constants (irréalistes).
 \end{itemize}
 
-\bigskip
+\vspace{0.3cm}
 
 \textbf{Solutions préférées :}
 \begin{itemize}
-    \item \textbf{Probit} : $P(Y=1|X) = \Phi(X'\beta)$
-    \item \textbf{Logit} : $P(Y=1|X) = \Lambda(X'\beta) = \frac{e^{X'\beta}}{1+e^{X'\beta}}$
-    \item Nous pourrions, en principe, considérer d'autre distributions
-    \end{itemize}
+\item \textbf{Probit} : $\Prob(Y=1 \mid X) = \Phi(X'\beta)$.
+\item \textbf{Logit} : $\Prob(Y=1 \mid X) = \Lambda(X'\beta) = \frac{e^{X'\beta}}{1+e^{X'\beta}}$.
+\item Nous pourrions, en principe, considérer d'autres distributions.
+\end{itemize}
 
-\bigskip
+\vspace{0.3cm}
 
-$\Rightarrow$ Estimation par \textbf{maximum de vraisemblance}, propriétés asymptotiques bien établies.
+Estimation par \textbf{maximum de vraisemblance}, propriétés asymptotiques bien établies.
 
 \end{frame}
 
+%==============================================================================
+\section{Variables polytomiques ordonnées et de comptage}
+%==============================================================================
 
+\begin{frame}{Polytomiques ordonnées -- Définition}
 
-% --------------------------------------------
+\begin{itemize}
 
-\begin{frame}{Le cas d'une variable polytomique ordonnée}
-    \begin{definitionfr}
-        Variable qualitative à plus de deux modalités, ordonnées entre elles.
-    \end{definitionfr}
-    
-    \begin{exemplefr}
-        \begin{itemize}
-            \item \textbf{Quantitative discrétisée} : Part des produits innovants dans le CA
-            \begin{center}
-                \small $[0\%-10\%]$, $]10\%-30\%]$, $]30\%-70\%]$, $]70\%-100\%]$
-            \end{center}
-            
-            \item \textbf{Appréciation subjective} : Importance de la R\&D comme déterminant
-            \begin{center}
-                \small "Pas du tout", "Un peu", "Moyennement", "Beaucoup"
-            \end{center}
-        \end{itemize}
-    \end{exemplefr}
-    
-    \begin{remarquefr}
-        Dans les deux cas, les modalités traduisent un \alert{ordre} qui indique l'intensité de la variable.
-    \end{remarquefr}
+\item Variable qualitative à plus de deux modalités, ordonnées entre elles.\newline
+
+\item \textbf{Exemples :}
+  \begin{itemize}
+  \item \textbf{Quantitative discrétisée} : part des produits innovants dans le CA --- $[0\%-10\%]$, $]10\%-30\%]$, $]30\%-70\%]$, $]70\%-100\%]$.
+  \item \textbf{Appréciation subjective} : importance de la R\&D comme déterminant --- ``Pas du tout'', ``Un peu'', ``Moyennement'', ``Beaucoup''.
+  \end{itemize}
+
+\item Dans les deux cas, les modalités traduisent un \textbf{ordre} qui indique l'intensité de la variable.
+
+\end{itemize}
+
 \end{frame}
 
-\begin{frame}{Modèle latent}
-    \begin{block}{Variable latente continue}
-        Le modèle latent représente la "vraie valeur" de la variable :
-        \[
-        y_i^* = X_i b + u_i, \quad i = 1, \ldots, N
-        \]
-    \end{block}
-    
-    \begin{block}{Observation par intervalle}
-        La variable observable prend $r$ modalités :
-        \[
-        y_i = \begin{cases}
-            1 & \text{si } \alpha_0 < y_i^* \leq \alpha_1 \\
-            2 & \text{si } \alpha_1 < y_i^* \leq \alpha_2 \\
-            \vdots \\
-            r & \text{si } \alpha_{r-1} < y_i^* \leq \alpha_r
-        \end{cases}
-        \]
-        avec par convention $\alpha_0 = -\infty$ et $\alpha_r = +\infty$.
-    \end{block}
+\begin{frame}{Polytomiques ordonnées -- Modèle latent}
+
+\begin{itemize}
+
+\item Le modèle latent représente la ``vraie valeur'' de la variable :
+  \[
+  y_i^* = X_i b + u_i, \quad i = 1, \ldots, N
+  \]\newline
+
+\item La variable observable prend $r$ modalités :
+  \[
+  y_i = \begin{cases}
+      1 & \text{si } \alpha_0 < y_i^* \leq \alpha_1 \\
+      2 & \text{si } \alpha_1 < y_i^* \leq \alpha_2 \\
+      \vdots \\
+      r & \text{si } \alpha_{r-1} < y_i^* \leq \alpha_r
+  \end{cases}
+  \]
+  avec par convention $\alpha_0 = -\infty$ et $\alpha_r = +\infty$.
+
+\end{itemize}
+
 \end{frame}
 
-\begin{frame}{Représentation graphique}
-    \begin{center}
-        \begin{tikzpicture}[scale=0.65, every node/.style={transform shape}]
-            % Axe
-            \draw[thick, ->] (-0.5,0) -- (10.5,0) node[right] {$y^*$};
-            
-            % Seuils
-            \foreach \x in {0, 2, 5, 8, 10} {
-                \draw[thick] (\x,0.1) -- (\x,-0.1);
-            }
-            \node at (0,-0.5) {\footnotesize $-\infty$};
-            \node at (2,-0.5) {\footnotesize $\alpha_1$};
-            \node at (5,-0.5) {\footnotesize $\alpha_2$};
-            \node at (8,-0.5) {\footnotesize $\alpha_{r-1}$};
-            \node at (10,-0.5) {\footnotesize $+\infty$};
-            
-            % Modalités
-            \draw[darkblue, very thick] (0,0.5) -- (2,0.5);
-            \node[darkblue] at (1,1) {\small $y=1$};
-            
-            \draw[darkgreen, very thick] (2,0.5) -- (5,0.5);
-            \node[darkgreen] at (3.5,1) {\small $y=2$};
-            
-            \draw[orange, very thick, dashed] (5,0.5) -- (8,0.5);
-            \node[orange] at (6.5,1) {\small $\cdots$};
-            
-            \draw[darkred, very thick] (8,0.5) -- (10,0.5);
-            \node[darkred] at (9,1) {\small $y=r$};
-        \end{tikzpicture}
-    \end{center}
-    
-    \vspace{0.3cm}
-    
-    \begin{block}{Seuils}
-        \begin{itemize}
-            \item \textbf{Seuils connus} : cas des variables quantitatives discrétisées
-            \item \textbf{Seuils inconnus} : cas des appréciations subjectives (à estimer)
-        \end{itemize}
-    \end{block}
+\begin{frame}{Polytomiques ordonnées -- Représentation}
+
+\begin{center}
+    \begin{tikzpicture}[scale=0.65, every node/.style={transform shape}]
+        \draw[thick, ->] (-0.5,0) -- (10.5,0) node[right] {$y^*$};
+        \foreach \x in {0, 2, 5, 8, 10} {
+            \draw[thick] (\x,0.1) -- (\x,-0.1);
+        }
+        \node at (0,-0.5) {\footnotesize $-\infty$};
+        \node at (2,-0.5) {\footnotesize $\alpha_1$};
+        \node at (5,-0.5) {\footnotesize $\alpha_2$};
+        \node at (8,-0.5) {\footnotesize $\alpha_{r-1}$};
+        \node at (10,-0.5) {\footnotesize $+\infty$};
+        \draw[darkblue, very thick] (0,0.5) -- (2,0.5);
+        \node[darkblue] at (1,1) {\small $y=1$};
+        \draw[darkgreen, very thick] (2,0.5) -- (5,0.5);
+        \node[darkgreen] at (3.5,1) {\small $y=2$};
+        \draw[orange, very thick, dashed] (5,0.5) -- (8,0.5);
+        \node[orange] at (6.5,1) {\small $\cdots$};
+        \draw[darkred, very thick] (8,0.5) -- (10,0.5);
+        \node[darkred] at (9,1) {\small $y=r$};
+    \end{tikzpicture}
+\end{center}
+
+\vspace{0.3cm}
+
+\begin{itemize}
+
+\item \textbf{Seuils connus} : cas des variables quantitatives discrétisées.\newline
+
+\item \textbf{Seuils inconnus} : cas des appréciations subjectives (à estimer).
+
+\end{itemize}
+
 \end{frame}
 
-\begin{frame}{Probabilités des modalités}
-    \begin{propositionfr}
-        La probabilité d'observer la modalité $j$ est :
-        \begin{align*}
-            \Prob(y_i = j) &= \Prob(\alpha_{j-1} < y_i^* \leq \alpha_j) \\
-            &= \Prob(y_i^* \leq \alpha_j) - \Prob(y_i^* \leq \alpha_{j-1})
-        \end{align*}
-        pour $j = 1, \ldots, r$.
-    \end{propositionfr}
-    
-    \vspace{0.3cm}
-    
-    \begin{block}{Modèle Probit ordonné}
-        Si $u_i \sim \mathcal{N}(0, \sigma^2)$ :
-        \[
-        \Prob(y_i = j) = \Phi\left(\frac{\alpha_j - X_i b}{\sigma}\right) - \Phi\left(\frac{\alpha_{j-1} - X_i b}{\sigma}\right)
-        \]
-        où $\Phi$ est la fonction de répartition de la loi normale centrée réduite.
-    \end{block}
+\begin{frame}{Polytomiques ordonnées -- Probabilités}
+
+\begin{itemize}
+
+\item La probabilité d'observer la modalité $j$ est :
+  \begin{align*}
+      \Prob(y_i = j) &= \Prob(\alpha_{j-1} < y_i^* \leq \alpha_j) \\
+      &= \Prob(y_i^* \leq \alpha_j) - \Prob(y_i^* \leq \alpha_{j-1})
+  \end{align*}
+  pour $j = 1, \ldots, r$.\newline
+
+\item \textbf{Modèle Probit ordonné.} Si $u_i \sim \mathcal{N}(0, \sigma^2)$ :
+  \[
+  \Prob(y_i = j) = \Phi\left(\frac{\alpha_j - X_i b}{\sigma}\right) - \Phi\left(\frac{\alpha_{j-1} - X_i b}{\sigma}\right)
+  \]
+  où $\Phi$ est la fonction de répartition de la loi normale centrée réduite.
+
+\end{itemize}
+
 \end{frame}
 
-% --------------------------------------------
+\begin{frame}{Comptage -- Définition}
 
-\begin{frame}{Le cas d'une variable de comptage}
-    \begin{definitionfr}
-        Variable prenant ses valeurs dans $\N = \{0, 1, 2, \ldots\}$, représentant le nombre d'occurrences d'un événement.
-    \end{definitionfr}
-    
-    \begin{exemplefr}[Brevets]
-        Le nombre de brevets déposés par une entreprise sur une année :
-        \begin{itemize}
-            \item Valeurs entières positives ou nulles
-            \item Événements relativement rares
-            \item Beaucoup d'entreprises à 0 brevet
-        \end{itemize}
-    \end{exemplefr}
-    
-    \begin{remarquefr}
-        Ce n'est pas une variable quantitative classique : elle ne peut pas prendre de valeurs négatives et a une nature discrète.
-    \end{remarquefr}
+\begin{itemize}
+
+\item Variable prenant ses valeurs dans $\N = \{0, 1, 2, \ldots\}$, représentant le nombre d'occurrences d'un événement.\newline
+
+\item \textbf{Exemple (brevets) :} le nombre de brevets déposés par une entreprise sur une année :
+  \begin{itemize}
+  \item Valeurs entières positives ou nulles.
+  \item Événements relativement rares.
+  \item Beaucoup d'entreprises à 0 brevet.
+  \end{itemize}
+
+\item Ce n'est pas une variable quantitative classique : elle ne peut pas prendre de valeurs négatives et a une nature discrète.
+
+\end{itemize}
+
 \end{frame}
 
-\begin{frame}{Modélisation}
-    \begin{block}{Espérance conditionnelle}
-        L'espérance étant toujours strictement positive, on utilise une forme exponentielle :
-        \[
-        \E(y_i \mid X_i, b) = \exp(X_i b + u_i) > 0
-        \]
-    \end{block}
-    
-    \vspace{0.3cm}
-    
-    \begin{block}{Loi de Poisson}
-        On suppose que $y_i$ suit une \alert{loi de Poisson} de paramètre $\lambda_i = \exp(X_i b)$ :
-        \[
-        \Prob(y_i = k) = \frac{\exp(-\lambda_i) \lambda_i^k}{k!}, \quad k = 0, 1, 2, \ldots
-        \]
-    \end{block}
+\begin{frame}{Comptage -- Modèle de Poisson}
+
+\begin{itemize}
+
+\item L'espérance étant toujours strictement positive, on utilise une forme exponentielle :
+  \[
+  \E[y_i \mid X_i, b] = \exp(X_i b + u_i) > 0
+  \]\newline
+
+\item On suppose que $y_i$ suit une \textbf{loi de Poisson} de paramètre $\lambda_i = \exp(X_i b)$ :
+  \[
+  \Prob(y_i = k) = \frac{\exp(-\lambda_i) \lambda_i^k}{k!}, \quad k = 0, 1, 2, \ldots
+  \]
+
+\end{itemize}
+
 \end{frame}
 
+\begin{frame}{Comptage -- Sources d'aléa}
 
-\begin{frame}{Sources d'aléa}
-    \begin{alertblock}{Double source d'aléa}
-        \begin{enumerate}
-            \item \textbf{Erreur sur la moyenne} : $\exp(u_i)$ (incertitude sur l'espérance)
-            \item \textbf{Tirage de Poisson} : aléa intrinsèque du processus de comptage
-        \end{enumerate}
-    \end{alertblock}
-    
-    \vspace{0.3cm}
-    
-    \begin{block}{Distinction}
-        \begin{itemize}
-            \item \textbf{Modèle de Poisson homogène} : $\Var[\exp(u_i)] = 0$ (pas d'hétérogénéité inobservée)
-            \item \textbf{Modèle de Poisson hétérogène} : $\Var[\exp(u_i)] > 0$ (hétérogénéité présente)
-        \end{itemize}
-    \end{block}
-    
-    \begin{remarquefr}
-        Le modèle de Poisson homogène correspond à une loi de durée exponentielle pour le temps entre événements.
-    \end{remarquefr}
+\begin{alertblock}{Double source d'aléa}
+\begin{enumerate}
+\item \textbf{Erreur sur la moyenne} : $\exp(u_i)$ (incertitude sur l'espérance).
+\item \textbf{Tirage de Poisson} : aléa intrinsèque du processus de comptage.
+\end{enumerate}
+\end{alertblock}
+
+\vspace{0.3cm}
+
+\begin{itemize}
+
+\item \textbf{Modèle de Poisson homogène} : $\Var[\exp(u_i)] = 0$ (pas d'hétérogénéité inobservée).\newline
+
+\item \textbf{Modèle de Poisson hétérogène} : $\Var[\exp(u_i)] > 0$ (hétérogénéité présente).
+
+\end{itemize}
+
+\vspace{0.3cm}
+
+Le modèle de Poisson homogène correspond à une loi de durée exponentielle pour le temps entre événements.
+
 \end{frame}
 
-% ============================================
-% RÉCAPITULATIF
-% ============================================
-
-{
-\setbeamercolor{background canvas}{bg=darkred}
-\setbeamercolor{normal text}{fg=white}
-\usebeamercolor[fg]{normal text}
-\begin{frame}[plain]
-    \vfill
-    \begin{center}
-        {\Huge\bfseries SYNTHÈSE}
-        
-        \vspace{1cm}
-        
-        {\LARGE Récapitulatif des deux parties}
-        
-        \vspace{1.5cm}
-        
-        \begin{tikzpicture}
-            \node[rectangle, fill=white, rounded corners, minimum width=3.5cm, minimum height=0.8cm, text=darkblue] at (-3,0) {\textbf{Partie I : Explicatives}};
-            \node[rectangle, fill=white, rounded corners, minimum width=3.5cm, minimum height=0.8cm, text=darkgreen] at (3,0) {\textbf{Partie II : Expliquées}};
-        \end{tikzpicture}
-    \end{center}
-    \vfill
-\end{frame}
-}
-
+%==============================================================================
 \section{Récapitulatif}
+%==============================================================================
 
-\begin{frame}{Synthèse — \textcolor{darkblue}{Partie I : Variables explicatives}}
-    \begin{center}
-        \small
-        \begin{tabular}{lll}
-            \toprule
-            \textbf{Modèle} & \textbf{Interprétation de $b_j$} & \textbf{Remarque} \\
-            \midrule
-            Sans constante & $\E(y \mid \text{groupe } j)$ & Moyenne du groupe \\
-            Avec constante & $\E(y \mid j) - \E(y \mid k)$ & Écart à la référence $k$ \\
-            Avec $X$ & Idem, à $X$ fixé & Effet contrôlé \\
-            Avec interactions & Effet hétérogène & Centrer $X$ simplifie \\
-            \bottomrule
-        \end{tabular}
-    \end{center}
-    
-    \vspace{0.3cm}
-    
-    \begin{alertblock}{Points clés — Variables qualitatives \textbf{à droite}}
-        \begin{itemize}
-            \item Toujours indiquer la modalité de référence
-            \item Le test de Fisher teste l'égalité des moyennes entre groupes
-            \item Centrer les variables avant les produits croisés facilite l'interprétation
-        \end{itemize}
-    \end{alertblock}
+\begin{frame}{Récapitulatif -- Variables explicatives}
+
+\begin{center}
+    \small
+    \renewcommand{\arraystretch}{1.3}
+    \begin{tabular}{lll}
+        \toprule
+        \textbf{Modèle} & \textbf{Interprétation de $b_j$} & \textbf{Remarque} \\
+        \midrule
+        Sans constante & $\E[y \mid \text{groupe } j]$ & Moyenne du groupe \\
+        Avec constante & $\E[y \mid j] - \E[y \mid k]$ & Écart à la référence $k$ \\
+        Avec $X$ & Idem, à $X$ fixé & Effet contrôlé \\
+        Avec interactions & Effet hétérogène & Centrer $X$ simplifie \\
+        \bottomrule
+    \end{tabular}
+\end{center}
+
+\vspace{0.3cm}
+
+\begin{itemize}
+
+\item Toujours indiquer la modalité de référence.\newline
+
+\item Le test de Fisher teste l'égalité des moyennes entre groupes.\newline
+
+\item Centrer les variables avant les produits croisés facilite l'interprétation.
+
+\end{itemize}
+
 \end{frame}
 
-\begin{frame}{Synthèse — \textcolor{darkgreen}{Partie II : Variables expliquées}}
-    \begin{center}
-        \small
-        \begin{tabular}{llll}
-            \toprule
-            \textbf{Type} & \textbf{Valeurs} & \textbf{Modèle} & \textbf{Estimation} \\
-            \midrule
-            Dichotomique & $\{0, 1\}$ & Logit/Probit & MV \\
-            Polytomique ordonnée & $\{1, \ldots, r\}$ & Probit ordonné & MV \\
-            Comptage & $\N$ & Poisson & MV/PMV \\
-            Censurée & Continue + sélection & Tobit/Heckman & MV \\
-            \bottomrule
-        \end{tabular}
-    \end{center}
-    
-    \vspace{0.3cm}
-    
-    \begin{exampleblock}{Principe commun — Variables qualitatives \textbf{à gauche}}
-        \begin{enumerate}
-            \item Spécifier un \textbf{modèle latent} pour le phénomène sous-jacent
-            \item Définir le \textbf{lien} entre variable latente et variable observée
-            \item \textbf{Estimer} par maximum de vraisemblance
-        \end{enumerate}
-    \end{exampleblock}
+\begin{frame}{Récapitulatif -- Variables expliquées}
+
+\begin{center}
+    \small
+    \renewcommand{\arraystretch}{1.3}
+    \begin{tabular}{llll}
+        \toprule
+        \textbf{Type} & \textbf{Valeurs} & \textbf{Modèle} & \textbf{Estimation} \\
+        \midrule
+        Dichotomique & $\{0, 1\}$ & Logit/Probit & MV \\
+        Polytomique ordonnée & $\{1, \ldots, r\}$ & Probit ordonné & MV \\
+        Comptage & $\N$ & Poisson & MV/PMV \\
+        Censurée & Continue + sélection & Tobit/Heckman & MV \\
+        \bottomrule
+    \end{tabular}
+\end{center}
+
+\vspace{0.3cm}
+
+\textbf{Principe commun} --- variables qualitatives à gauche :
+
+\begin{enumerate}
+
+\item Spécifier un \textbf{modèle latent} pour le phénomène sous-jacent.\newline
+
+\item Définir le \textbf{lien} entre variable latente et variable observée.\newline
+
+\item \textbf{Estimer} par maximum de vraisemblance.
+
+\end{enumerate}
+
 \end{frame}
 
-\begin{frame}{Pour aller plus loin}
-    \begin{block}{Chapitres suivants}
-        \begin{itemize}
-            \item \textbf{Chapitre 2} : Maximum de vraisemblance (théorie et propriétés)
-            \item \textbf{Chapitre 3} : Modèles Logit et Probit en détail
-            \item \textbf{Chapitre 4} : Variables polytomiques
-            \item \textbf{Chapitres 5} : Extensions
-        \end{itemize}
-    \end{block}
-    
-    \vspace{0.3cm}
-    
-    \begin{block}{Références}
-      \begin{itemize}
-        \item
-            \item Gouriéroux, C. (1989). \textit{Économétrie des variables qualitatives}
-            \item Maddala, G.S. (1983). \textit{Limited-Dependent and Qualitative Variables in Econometrics}
-        \end{itemize}
-    \end{block}
+\begin{frame}{Récapitulatif -- Références}
+
+\begin{itemize}
+
+\item \textbf{Chapitres suivants :}
+  \begin{itemize}
+  \item Chapitre 2 : Estimation par maximum de vraisemblance (théorie et exemples).
+  \item Chapitre 3 : Algorithmes d'optimisation numérique.
+  \item Chapitre 4 : Modèles Logit et Probit en détail.
+  \end{itemize}
+
+\item \textbf{Références :}
+  \begin{itemize}
+  \item Gouriéroux, C. (1989). \textit{Économétrie des variables qualitatives}.
+  \item Maddala, G.S. (1983). \textit{Limited-Dependent and Qualitative Variables in Econometrics}.
+  \end{itemize}
+
+\end{itemize}
+
 \end{frame}
 
 \end{document}
