@@ -760,77 +760,661 @@ préféré pour sa simplicité d'interprétation (odds ratio).
 \end{frame}
 
 %==============================================================================
-\section{Application}
+\section{Application 1}
 %==============================================================================
 
-\begin{frame}{Application -- Données}
+\begin{frame}{Application 1 -- Données}
 
 \begin{itemize}
 
-\item \textbf{Données} : Enquête INSEE «~Jeunes et Carrières~» (1997),
-  $N = 5425$ couples.\newline
+\item \textbf{Source} : \textit{Default of Credit Card Clients} (Yeh,
+  2009), UCI Machine Learning Repository.\newline
 
-\item \textbf{Variable expliquée} : Participation des femmes au marché du
-  travail (0/1).\newline
+\item $N = 30\,000$ détenteurs de cartes de crédit d'une banque
+  taïwanaise, observés entre avril et septembre 2005.\newline
 
-\item \textbf{Variables explicatives} :
-  \begin{itemize}
-  \item Âge, nombre d'enfants, naissance récente\newline
-  \item Activité des parents, nationalité\newline
-  \item Niveau d'éducation (7 niveaux)\newline
-  \item Région d'habitation\newline
-  \item Caractéristiques du conjoint
-  \end{itemize}
+\item \textbf{Variable expliquée} : défaut de paiement le mois suivant
+  (octobre 2005). Codée 1 si défaut, 0 sinon.\newline
+
+\item \textbf{Taux de défaut} : 22,1\% ($6\,636$ défauts sur
+  $30\,000$).
 
 \end{itemize}
 
 \end{frame}
 
-\begin{frame}[fragile]{Application -- Syntaxe SAS}
+\begin{frame}{Application 1 -- Contexte}
 
-\textbf{Estimation Logit} :
-\begin{verbatim}
-proc logistic data=tab descending;
-    model y = x1 x2 x3;
-run;
-\end{verbatim}
+\begin{itemize}
 
-\textbf{Estimation Probit} :
-\begin{verbatim}
-proc logistic data=tab descending;
-    model y = x1 x2 x3 / link=normit;
-run;
-\end{verbatim}
+\item Chaque client dispose d'une \textbf{limite de crédit} : montant
+  maximal que la banque l'autorise à emprunter sur sa carte.\newline
 
-L'option \texttt{descending} est \textbf{cruciale} : sans elle, SAS modélise
-$\PP(Y=0)$ au lieu de $\PP(Y=1)$.
+\item C'est un attribut \textbf{structurel} du compte, fixé par la banque
+  en fonction du profil du client (revenus, historique, etc.). Ce n'est
+  pas un montant mensuel.\newline
+
+\item Chaque mois, le client doit rembourser (au moins partiellement)
+  son encours. Un \textbf{retard de paiement} est enregistré s'il ne
+  respecte pas l'échéance.\newline
+
+\item La variable \texttt{LATE\_SEPT} vaut 1 si le client a au moins un
+  mois de retard en septembre 2005. L'objectif est de prédire le
+  \textbf{défaut en octobre}.
+
+\end{itemize}
+
+\medskip
+
+\begin{alertblock}{Terminologie}
+Le «~défaut~» désigne ici un \textbf{retard de paiement} ($\geq 1$
+mois), pas une incapacité définitive de rembourser. En pratique
+bancaire, un vrai défaut (\textit{charge-off}) n'est constaté qu'après
+plusieurs mois d'impayés (généralement 6 mois).
+\end{alertblock}
 
 \end{frame}
 
-\begin{frame}{Application -- Résultats}
+\begin{frame}{Application 1 -- Variables explicatives}
+
+\begin{center}
+    \small
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabular}{llp{6cm}}
+        \toprule
+        \textbf{Variable} & \textbf{Type} & \textbf{Description} \\
+        \midrule
+        \texttt{LIMIT\_K} & Quantitative & Limite de crédit accordée
+          (en milliers de NT\$) \\
+        \texttt{AGE} & Quantitative & Âge du client (en années) \\
+        \texttt{FEMALE} & Binaire & $=1$ si femme, $=0$ si homme \\
+        \texttt{MARRIED} & Binaire & $=1$ si marié(e), $=0$ sinon \\
+        \texttt{GRADUATE} & Binaire & $=1$ si diplôme de
+          3\textsuperscript{e} cycle \\
+        \texttt{UNIVERSITY} & Binaire & $=1$ si diplôme universitaire
+          (1\textsuperscript{er}/2\textsuperscript{e} cycle) \\
+        \texttt{LATE\_SEPT} & Binaire & $=1$ si retard de paiement
+          $\geq 1$ mois en septembre \\
+        \bottomrule
+    \end{tabular}
+\end{center}
+
+La catégorie de référence pour l'éducation est : lycée ou moins.
+
+\end{frame}
+
+\begin{frame}{Application 1 -- Statistiques descriptives}
+
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{Variables quantitatives} :
+\smallskip
+
+    \small
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabular}{lrr}
+        \toprule
+        & \texttt{LIMIT\_K} & \texttt{AGE} \\
+        \midrule
+        Moyenne & 167,5 & 35,5 \\
+        Écart-type & 129,7 & 9,2 \\
+        Médiane & 140 & 34 \\
+        Min & 10 & 21 \\
+        Max & 1\,000 & 79 \\
+        \bottomrule
+    \end{tabular}
+\end{column}
+\begin{column}{0.48\textwidth}
+\textbf{Variables binaires} :
+\smallskip
+
+    \small
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabular}{lrr}
+        \toprule
+        & \textbf{Prop.} & \textbf{\% déf.} \\
+        \midrule
+        Femme & 60,4\% & 20,8\% \\
+        Homme & 39,6\% & 24,2\% \\
+        Marié(e) & 45,5\% & 23,5\% \\
+        3\textsuperscript{e} cycle & 35,3\% & 19,2\% \\
+        Universitaire & 46,8\% & 23,7\% \\
+        Retard sept. & 22,7\% & 50,3\% \\
+        \bottomrule
+    \end{tabular}
+\end{column}
+\end{columns}
+
+\bigskip
+
+Le retard de paiement en septembre est le \textbf{signal le plus fort} :
+le taux de défaut passe de 13,8\% (sans retard) à 50,3\% (avec retard).
+
+\end{frame}
+
+\begin{frame}{Application 1 -- Taux de défaut par limite de crédit}
+
+\begin{center}
+    \begin{tikzpicture}
+        \begin{axis}[
+            ybar,
+            bar width=1.2cm,
+            width=12cm, height=5.5cm,
+            ylabel={Taux de défaut (\%)},
+            symbolic x coords={$<$50, 50--100, 100--200, 200--500, $>$500},
+            xtick=data,
+            xlabel={Limite de crédit (milliers NT\$)},
+            ymin=0, ymax=45,
+            nodes near coords={\pgfmathprintnumber\pgfplotspointmeta\%},
+            nodes near coords align={vertical},
+            every node near coord/.append style={font=\small},
+            enlarge x limits=0.15,
+            fill=darkblue!70,
+            draw=darkblue,
+        ]
+        \addplot coordinates {
+            ($<$50, 36.1) (50--100, 26.0) (100--200, 20.8) (200--500, 15.5) ($>$500, 11.2)
+        };
+        \end{axis}
+    \end{tikzpicture}
+\end{center}
+
+Relation décroissante et monotone : plus la limite de crédit est élevée,
+plus le risque de défaut est faible.
+
+\end{frame}
+
+\begin{frame}[fragile]{Application 1 -- Syntaxe Python}
+
+\begin{verbatim}
+import statsmodels.api as sm
+
+# Estimation Logit
+logit = sm.Logit(y, X).fit()
+
+# Estimation Probit
+probit = sm.Probit(y, X).fit()
+
+# Effets marginaux au point moyen
+mfx = logit.get_margeff(at="mean")
+
+# Odds ratios
+odds_ratios = np.exp(logit.params)
+\end{verbatim}
+
+\end{frame}
+
+\begin{frame}{Application 1 -- Résultats Logit et Probit}
+
+\begin{center}
+    \scriptsize
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabular}{lrrrr}
+        \toprule
+        & \multicolumn{2}{c}{\textbf{Logit}} & \multicolumn{2}{c}{\textbf{Probit}} \\
+        \cmidrule(lr){2-3} \cmidrule(lr){4-5}
+        \textbf{Variable} & \textbf{Coef.} & \textbf{(é.t.)} & \textbf{Coef.} & \textbf{(é.t.)} \\
+        \midrule
+        Constante & $-1.668$*** & $(0.081)$ & $-0.999$*** & $(0.046)$ \\
+        Limite crédit (milliers NT\$) & $-0.0025$*** & $(0.0001)$ & $-0.0014$*** & $(0.0001)$ \\
+        Femme & $-0.158$*** & $(0.031)$ & $-0.088$*** & $(0.018)$ \\
+        Marié(e) & $+0.172$*** & $(0.034)$ & $+0.096$*** & $(0.020)$ \\
+        Diplôme 3\textsuperscript{e} cycle & $+0.080$ & $(0.047)$ & $+0.044$ & $(0.027)$ \\
+        Diplôme universitaire & $+0.120$** & $(0.042)$ & $+0.065$** & $(0.024)$ \\
+        Âge & $+0.005$** & $(0.002)$ & $+0.003$** & $(0.001)$ \\
+        Retard paiement sept. & $+1.751$*** & $(0.031)$ & $+1.042$*** & $(0.019)$ \\
+        \midrule
+        Log-vraisemblance & \multicolumn{2}{c}{$-13\,822$} & \multicolumn{2}{c}{$-13\,827$} \\
+        $N$ & \multicolumn{2}{c}{$30\,000$} & \multicolumn{2}{c}{$30\,000$} \\
+        \bottomrule
+    \end{tabular}
+\end{center}
+
+{\small Le principal déterminant du défaut est le \textbf{retard de
+paiement}. Une limite de crédit élevée \textbf{réduit} le risque.}
+
+\end{frame}
+
+\begin{frame}{Application 1 -- Conversion Logit $\to$ Probit}
+
+\begin{center}
+    \small
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabular}{lrrr}
+        \toprule
+        \textbf{Variable} & $\hat\beta_{\text{Logit}}$ & $0.55 \times \hat\beta_{\text{Logit}}$ & $\hat\beta_{\text{Probit}}$ \\
+        \midrule
+        Limite crédit & $-0.0025$ & $-0.0014$ & $-0.0014$ \\
+        Femme & $-0.158$ & $-0.087$ & $-0.088$ \\
+        Marié(e) & $+0.172$ & $+0.095$ & $+0.096$ \\
+        Diplôme univ. & $+0.120$ & $+0.066$ & $+0.065$ \\
+        Âge & $+0.005$ & $+0.003$ & $+0.003$ \\
+        Retard sept. & $+1.751$ & $+0.965$ & $+1.042$ \\
+        \bottomrule
+    \end{tabular}
+\end{center}
+
+La conversion $\hat\beta_{\text{Probit}} \approx 0.55 \times
+\hat\beta_{\text{Logit}}$ fonctionne très bien, \textbf{sauf} pour le
+retard de paiement (coefficient élevé, queues de distribution).
+
+\end{frame}
+
+\begin{frame}{Application 1 -- Odds ratios (Logit)}
 
 \begin{center}
     \small
     \renewcommand{\arraystretch}{1.3}
     \begin{tabular}{lrrr}
         \toprule
-        \textbf{Variable} & \textbf{Coef.} & \textbf{Écart-type} & \textbf{Significatif} \\
+        \textbf{Variable} & $\hat{\beta}$ & $\exp(\hat{\beta})$ & \textbf{Variation odds} \\
         \midrule
-        Constante & $-0.92$ & $0.17$ & *** \\
-        Âge & $+0.05$ & $0.006$ & *** \\
-        1 enfant & $-0.22$ & $0.07$ & *** \\
-        2 enfants & $-0.58$ & $0.07$ & *** \\
-        3 enfants & $-0.98$ & $0.08$ & *** \\
-        4+ enfants & $-1.61$ & $0.11$ & *** \\
-        Diplôme BTS & $+1.00$ & $0.09$ & *** \\
-        Diplôme Sup. & $+0.92$ & $0.10$ & *** \\
+        Limite crédit (1000 NT\$) & $-0.0025$ & $0.998$ & $-0.3$\% \\
+        Femme & $-0.158$ & $0.854$ & $-14.6$\% \\
+        Marié(e) & $+0.172$ & $1.187$ & $+18.7$\% \\
+        Diplôme 3\textsuperscript{e} cycle & $+0.080$ & $1.084$ & $+8.4$\% \\
+        Diplôme universitaire & $+0.120$ & $1.128$ & $+12.8$\% \\
+        Âge (1 an) & $+0.005$ & $1.005$ & $+0.5$\% \\
+        Retard paiement sept. & $+1.751$ & $5.760$ & $+476$\% \\
         \bottomrule
     \end{tabular}
 \end{center}
 
-Les principaux déterminants de la participation sont le \textbf{nombre
-d'enfants} (effet négatif croissant) et le \textbf{niveau d'études} (effet
-positif fort).
+Un retard de paiement en septembre \textbf{multiplie par 5,8} les odds de
+défaut. Être femme les \textbf{réduit de 15\%}.
+
+\end{frame}
+
+\begin{frame}{Application 1 -- Effets marginaux au point moyen}
+
+\begin{center}
+    \small
+    \renewcommand{\arraystretch}{1.3}
+    \begin{tabular}{lrr}
+        \toprule
+        \textbf{Variable} & \textbf{Logit} & \textbf{Probit} \\
+        \midrule
+        Limite crédit (1000 NT\$) & $-0.0004$*** & $-0.0004$*** \\
+        Femme & $-0.024$*** & $-0.024$*** \\
+        Marié(e) & $+0.027$*** & $+0.027$*** \\
+        Diplôme 3\textsuperscript{e} cycle & $+0.012$ & $+0.012$ \\
+        Diplôme universitaire & $+0.019$** & $+0.018$** \\
+        Âge (1 an) & $+0.001$** & $+0.001$** \\
+        Retard paiement sept. & $+0.271$*** & $+0.289$*** \\
+        \bottomrule
+    \end{tabular}
+\end{center}
+
+Les effets marginaux sont \textbf{quasi identiques} entre Logit et Probit.
+Un retard de paiement augmente la probabilité de défaut de
+\textbf{27 points de pourcentage}.
+
+\end{frame}
+
+\begin{frame}{Application 1 -- Effets incrémentaux (Logit)}
+
+\begin{center}
+    \small
+    \renewcommand{\arraystretch}{1.3}
+    \begin{tabular}{lrrr}
+        \toprule
+        \textbf{Variable} & $\PP(Y=1 \mid X=1)$ & $\PP(Y=1 \mid X=0)$ & $\Delta$ \\
+        \midrule
+        Femme & $0.182$ & $0.206$ & $-0.025$ \\
+        Marié(e) & $0.206$ & $0.179$ & $+0.027$ \\
+        Diplôme 3\textsuperscript{e} cycle & $0.199$ & $0.187$ & $+0.013$ \\
+        Diplôme universitaire & $0.201$ & $0.183$ & $+0.019$ \\
+        Retard paiement sept. & $0.477$ & $0.137$ & $+0.341$ \\
+        \bottomrule
+    \end{tabular}
+\end{center}
+
+Pour un individu «~moyen~», un retard de paiement fait passer la
+probabilité de défaut de \textbf{14\% à 48\%}.
+
+\end{frame}
+
+\begin{frame}{Application 1 -- Effets interdéciles (Logit)}
+
+\begin{center}
+    \small
+    \renewcommand{\arraystretch}{1.3}
+    \begin{tabular}{lrrrr}
+        \toprule
+        \textbf{Variable} & $D_1$ & $D_9$ & $\PP(D_1)$ & $\Delta_{D_1 \to D_9}$ \\
+        \midrule
+        Limite de crédit & 30 & 360 & $0.250$ & $-0.123$ \\
+        Âge & 25 & 49 & $0.183$ & $+0.019$ \\
+        \bottomrule
+    \end{tabular}
+\end{center}
+
+\begin{itemize}
+
+\item La limite de crédit a un \textbf{fort potentiel d'influence} :
+  passer du 1\textsuperscript{er} au 9\textsuperscript{e} décile réduit la
+  probabilité de défaut de \textbf{12,3 points}.\newline
+
+\item L'âge a un effet \textbf{très faible} ($+1.9$ points entre 25 et
+  49 ans).
+
+\end{itemize}
+
+\end{frame}
+
+%==============================================================================
+\section{Application 2}
+%==============================================================================
+
+\begin{frame}{Application 2 -- Données}
+
+\begin{itemize}
+
+\item \textbf{Source} : \textit{Adult} (Becker \& Kohavi, 1996), UCI
+  Machine Learning Repository. Extrait du recensement américain de
+  1994.\newline
+
+\item $N = 45\,222$ individus actifs (après suppression des valeurs
+  manquantes).\newline
+
+\item \textbf{Variable expliquée} : revenu annuel supérieur à 50\,000\,\$
+  (0/1).\newline
+
+\item \textbf{Taux de revenu élevé} : 24,8\%.
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Application 2 -- Contexte}
+
+\begin{itemize}
+
+\item Le seuil de 50\,000\,\$ correspond environ au \textbf{75\textsuperscript{e}
+  percentile} des revenus américains en 1994.\newline
+
+\item On cherche à identifier les déterminants socio-démographiques
+  d'un \textbf{revenu élevé} : éducation, âge, sexe, situation
+  matrimoniale, temps de travail.\newline
+
+\item Les variables d'éducation sont construites à partir d'une
+  variable ordinale (\texttt{education\_num}, de 1 à 16). On distingue
+  trois niveaux :
+  \begin{itemize}
+  \item \textbf{Bachelor+} : $\geq 13$ (bachelor, master, doctorat)\newline
+  \item \textbf{High school / College} : 9 à 12\newline
+  \item \textbf{Référence} : $\leq 8$ (sans diplôme du secondaire)
+  \end{itemize}
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Application 2 -- Variables explicatives}
+
+\begin{center}
+    \small
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabular}{llp{6cm}}
+        \toprule
+        \textbf{Variable} & \textbf{Type} & \textbf{Description} \\
+        \midrule
+        \texttt{age} & Quantitative & Âge (en années) \\
+        \texttt{hours\_per\_week} & Quantitative & Heures travaillées par
+          semaine \\
+        \texttt{FEMALE} & Binaire & $=1$ si femme, $=0$ si homme \\
+        \texttt{MARRIED} & Binaire & $=1$ si marié(e), $=0$ sinon \\
+        \texttt{WHITE} & Binaire & $=1$ si blanc, $=0$ sinon \\
+        \texttt{BACHELOR} & Binaire & $=1$ si diplôme $\geq$ bachelor \\
+        \texttt{HIGH\_SCHOOL} & Binaire & $=1$ si high school ou college \\
+        \bottomrule
+    \end{tabular}
+\end{center}
+
+La catégorie de référence pour l'éducation est : sans diplôme du
+secondaire.
+
+\end{frame}
+
+\begin{frame}{Application 2 -- Statistiques descriptives}
+
+\begin{columns}[T]
+\begin{column}{0.45\textwidth}
+\textbf{Variables quantitatives} :
+\smallskip
+
+    \small
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabular}{lrr}
+        \toprule
+        & \texttt{age} & \texttt{hours} \\
+        \midrule
+        Moyenne & 38,5 & 40,9 \\
+        Écart-type & 13,2 & 12,0 \\
+        Médiane & 37 & 40 \\
+        Min & 17 & 1 \\
+        Max & 90 & 99 \\
+        \bottomrule
+    \end{tabular}
+\end{column}
+\begin{column}{0.50\textwidth}
+\textbf{Variables binaires} :
+\smallskip
+
+    \small
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabular}{lrr}
+        \toprule
+        & \textbf{Prop.} & \textbf{\% $>$50K} \\
+        \midrule
+        Femme & 32,5\% & 11,4\% \\
+        Homme & 67,5\% & 31,2\% \\
+        Marié(e) & 46,6\% & 45,4\% \\
+        Blanc & 86,0\% & 26,2\% \\
+        Bachelor+ & 25,2\% & 48,7\% \\
+        High school & 62,2\% & 18,9\% \\
+        \bottomrule
+    \end{tabular}
+\end{column}
+\end{columns}
+
+\bigskip
+
+L'éducation et le statut matrimonial sont les variables les plus
+discriminantes : 48,7\% des diplômés Bachelor+ gagnent $>$50K contre
+18,9\% pour les High school.
+
+\end{frame}
+
+\begin{frame}{Application 2 -- Taux de revenu élevé par âge}
+
+\begin{center}
+    \begin{tikzpicture}
+        \begin{axis}[
+            ybar,
+            bar width=1.2cm,
+            width=12cm, height=5.5cm,
+            ylabel={Taux $>$50K (\%)},
+            symbolic x coords={17--24, 25--34, 35--44, 45--54, 55--64, 65+},
+            xtick=data,
+            xlabel={Tranche d'âge},
+            ymin=0, ymax=50,
+            nodes near coords={\pgfmathprintnumber\pgfplotspointmeta\%},
+            nodes near coords align={vertical},
+            every node near coord/.append style={font=\small},
+            enlarge x limits=0.12,
+            fill=darkblue!70,
+            draw=darkblue,
+        ]
+        \addplot coordinates {
+            (17--24, 1.2) (25--34, 17.3) (35--44, 33.7)
+            (45--54, 39.9) (55--64, 32.8) (65+, 22.2)
+        };
+        \end{axis}
+    \end{tikzpicture}
+\end{center}
+
+Relation en \textbf{cloche} : le taux de revenu élevé croît avec l'âge
+jusqu'à 45--54 ans, puis décroît. Cela justifie un modèle linéaire en
+âge comme approximation sur la population active.
+
+\end{frame}
+
+\begin{frame}{Application 2 -- Résultats Logit et Probit}
+
+\begin{center}
+    \scriptsize
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabular}{lrrrr}
+        \toprule
+        & \multicolumn{2}{c}{\textbf{Logit}} & \multicolumn{2}{c}{\textbf{Probit}} \\
+        \cmidrule(lr){2-3} \cmidrule(lr){4-5}
+        \textbf{Variable} & \textbf{Coef.} & \textbf{(é.t.)} & \textbf{Coef.} & \textbf{(é.t.)} \\
+        \midrule
+        Constante & $-7.260$*** & $(0.111)$ & $-4.119$*** & $(0.060)$ \\
+        Âge & $+0.032$*** & $(0.001)$ & $+0.019$*** & $(0.001)$ \\
+        Femme & $-0.085$* & $(0.038)$ & $-0.074$*** & $(0.021)$ \\
+        Marié(e) & $+2.288$*** & $(0.035)$ & $+1.283$*** & $(0.019)$ \\
+        Blanc & $+0.246$*** & $(0.044)$ & $+0.133$*** & $(0.025)$ \\
+        Diplôme $\geq$ Bachelor & $+3.016$*** & $(0.065)$ & $+1.694$*** & $(0.034)$ \\
+        High school / College & $+1.497$*** & $(0.062)$ & $+0.819$*** & $(0.033)$ \\
+        Heures / semaine & $+0.032$*** & $(0.001)$ & $+0.018$*** & $(0.001)$ \\
+        \midrule
+        Log-vraisemblance & \multicolumn{2}{c}{$-17\,358$} & \multicolumn{2}{c}{$-17\,314$} \\
+        $N$ & \multicolumn{2}{c}{$45\,222$} & \multicolumn{2}{c}{$45\,222$} \\
+        \bottomrule
+    \end{tabular}
+\end{center}
+
+{\small Tous les coefficients sont significatifs. Les principaux
+déterminants du revenu élevé sont le \textbf{diplôme} et le
+\textbf{statut matrimonial}.}
+
+\end{frame}
+
+\begin{frame}{Application 2 -- Conversion Logit $\to$ Probit}
+
+\begin{center}
+    \small
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabular}{lrrr}
+        \toprule
+        \textbf{Variable} & $\hat\beta_{\text{Logit}}$ & $0.55 \times \hat\beta_{\text{Logit}}$ & $\hat\beta_{\text{Probit}}$ \\
+        \midrule
+        Âge & $+0.032$ & $+0.018$ & $+0.019$ \\
+        Femme & $-0.085$ & $-0.047$ & $-0.074$ \\
+        Marié(e) & $+2.288$ & $+1.262$ & $+1.283$ \\
+        Blanc & $+0.246$ & $+0.136$ & $+0.133$ \\
+        Diplôme $\geq$ Bachelor & $+3.016$ & $+1.663$ & $+1.694$ \\
+        High school / College & $+1.497$ & $+0.826$ & $+0.819$ \\
+        Heures / semaine & $+0.032$ & $+0.017$ & $+0.018$ \\
+        \bottomrule
+    \end{tabular}
+\end{center}
+
+La conversion $\times 0.55$ fonctionne bien pour la plupart des
+variables. L'écart pour \texttt{FEMALE} (coefficient faible, peu
+significatif en Logit) est plus marqué.
+
+\end{frame}
+
+\begin{frame}{Application 2 -- Odds ratios (Logit)}
+
+\begin{center}
+    \small
+    \renewcommand{\arraystretch}{1.3}
+    \begin{tabular}{lrrr}
+        \toprule
+        \textbf{Variable} & $\hat{\beta}$ & $\exp(\hat{\beta})$ & \textbf{Variation odds} \\
+        \midrule
+        Âge (1 an) & $+0.032$ & $1.033$ & $+3.3$\% \\
+        Femme & $-0.085$ & $0.919$ & $-8.1$\% \\
+        Marié(e) & $+2.288$ & $9.857$ & $+886$\% \\
+        Blanc & $+0.246$ & $1.279$ & $+27.9$\% \\
+        Diplôme $\geq$ Bachelor & $+3.016$ & $20.407$ & $+1\,941$\% \\
+        High school / College & $+1.497$ & $4.470$ & $+347$\% \\
+        Heures / semaine (1h) & $+0.032$ & $1.032$ & $+3.2$\% \\
+        \bottomrule
+    \end{tabular}
+\end{center}
+
+Un diplôme Bachelor+ \textbf{multiplie par 20} les odds de revenu élevé.
+Le mariage les \textbf{multiplie par 10} (effet de sélection probable).
+
+\end{frame}
+
+\begin{frame}{Application 2 -- Effets marginaux au point moyen}
+
+\begin{center}
+    \small
+    \renewcommand{\arraystretch}{1.3}
+    \begin{tabular}{lrr}
+        \toprule
+        \textbf{Variable} & \textbf{Logit} & \textbf{Probit} \\
+        \midrule
+        Âge (1 an) & $+0.004$*** & $+0.004$*** \\
+        Femme & $-0.010$* & $-0.017$*** \\
+        Marié(e) & $+0.280$*** & $+0.302$*** \\
+        Blanc & $+0.030$*** & $+0.031$*** \\
+        Diplôme $\geq$ Bachelor & $+0.369$*** & $+0.399$*** \\
+        High school / College & $+0.183$*** & $+0.193$*** \\
+        Heures / semaine (1h) & $+0.004$*** & $+0.004$*** \\
+        \bottomrule
+    \end{tabular}
+\end{center}
+
+Un diplôme Bachelor+ augmente la probabilité de revenu élevé de
+\textbf{37 points de pourcentage}. Le mariage : \textbf{28 points}.
+
+\end{frame}
+
+\begin{frame}{Application 2 -- Effets incrémentaux (Logit)}
+
+\begin{center}
+    \small
+    \renewcommand{\arraystretch}{1.3}
+    \begin{tabular}{lrrr}
+        \toprule
+        \textbf{Variable} & $\PP(Y=1 \mid X=1)$ & $\PP(Y=1 \mid X=0)$ & $\Delta$ \\
+        \midrule
+        Femme & $0.136$ & $0.146$ & $-0.010$ \\
+        Marié(e) & $0.361$ & $0.054$ & $+0.307$ \\
+        Blanc & $0.147$ & $0.119$ & $+0.028$ \\
+        Diplôme $\geq$ Bachelor & $0.614$ & $0.072$ & $+0.541$ \\
+        High school / College & $0.227$ & $0.062$ & $+0.165$ \\
+        \bottomrule
+    \end{tabular}
+\end{center}
+
+Pour un individu «~moyen~», un diplôme Bachelor+ fait passer la
+probabilité de revenu élevé de \textbf{7\% à 61\%}.
+
+\end{frame}
+
+\begin{frame}{Application 2 -- Effets interdéciles (Logit)}
+
+\begin{center}
+    \small
+    \renewcommand{\arraystretch}{1.3}
+    \begin{tabular}{lrrrr}
+        \toprule
+        \textbf{Variable} & $D_1$ & $D_9$ & $\PP(D_1)$ & $\Delta_{D_1 \to D_9}$ \\
+        \midrule
+        Âge & 22 & 57 & $0.089$ & $+0.142$ \\
+        Heures / semaine & 25 & 55 & $0.092$ & $+0.114$ \\
+        \bottomrule
+    \end{tabular}
+\end{center}
+
+\begin{itemize}
+
+\item L'âge a un \textbf{potentiel d'influence notable} : $+14.2$ points
+  entre 22 et 57 ans.\newline
+
+\item Les heures travaillées ont un effet comparable : $+11.4$ points
+  entre 25 et 55 heures/semaine.
+
+\end{itemize}
 
 \end{frame}
 
