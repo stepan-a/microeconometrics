@@ -682,14 +682,15 @@ préféré pour sa simplicité d'interprétation (odds ratio).
 
 \begin{itemize}
 
-\item L'\textbf{effet incrémental} de $X$ sur la probabilité est :
+\item L'\textbf{effet incrémental} de $X$ sur la probabilité est la
+  différence de probabilités quand $X$ passe de 0 à 1 :
   \[
-  \Delta_X = \frac{\PP(Y=1 \mid X=1)}{\PP(Y=1 \mid X=0)} = \frac{F(\beta_0 + \beta_1)}{F(\beta_0)}
+  \Delta_X = \PP(Y=1 \mid X=1) - \PP(Y=1 \mid X=0) = F(\beta_0 + \beta_1) - F(\beta_0)
   \]
 
 \item Pour le Logit :
   \[
-  \Delta_X = \exp(\beta_1) \times \frac{1 + \exp(\beta_0)}{1 + \exp(\beta_0 + \beta_1)}
+  \Delta_X = \frac{\exp(\beta_0 + \beta_1)}{1 + \exp(\beta_0 + \beta_1)} - \frac{\exp(\beta_0)}{1 + \exp(\beta_0)}
   \]
 
 \item L'effet incrémental dépend du point de référence $\beta_0$,
