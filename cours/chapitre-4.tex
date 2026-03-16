@@ -935,8 +935,11 @@ logit = sm.Logit(y, X).fit()
 # Estimation Probit
 probit = sm.Probit(y, X).fit()
 
-# Effets marginaux au point moyen
+# Effets marginaux (variables continues)
 mfx = logit.get_margeff(at="mean")
+
+# Effets incrémentaux (variables binaires)
+mfx_d = logit.get_margeff(at="mean", dummy=True)
 
 # Odds ratios
 odds_ratios = np.exp(logit.params)
@@ -1035,19 +1038,14 @@ défaut. Être femme les \textbf{réduit de 15\%}.
         \textbf{Variable} & \textbf{Logit} & \textbf{Probit} \\
         \midrule
         Limite crédit (1000 NT\$) & $-0.0004$*** & $-0.0004$*** \\
-        Femme & $-0.024$*** & $-0.024$*** \\
-        Marié(e) & $+0.027$*** & $+0.027$*** \\
-        Diplôme 3\textsuperscript{e} cycle & $+0.012$ & $+0.012$ \\
-        Diplôme universitaire & $+0.019$** & $+0.018$** \\
         Âge (1 an) & $+0.001$** & $+0.001$** \\
-        Retard paiement sept. & $+0.271$*** & $+0.289$*** \\
         \bottomrule
     \end{tabular}
 \end{center}
 
-Les effets marginaux sont \textbf{quasi identiques} entre Logit et Probit.
-Un retard de paiement augmente la probabilité de défaut de
-\textbf{27 points de pourcentage}.
+L'effet marginal (dérivée) n'est défini que pour les variables
+\textbf{continues}. Pour les variables binaires, on utilise l'\textbf{effet
+incrémental} (slide suivant).
 
 \end{frame}
 
@@ -1353,18 +1351,14 @@ Le mariage les \textbf{multiplie par 10} (effet de sélection probable).
         \textbf{Variable} & \textbf{Logit} & \textbf{Probit} \\
         \midrule
         Âge (1 an) & $+0.004$*** & $+0.004$*** \\
-        Femme & $-0.010$* & $-0.017$*** \\
-        Marié(e) & $+0.280$*** & $+0.302$*** \\
-        Blanc & $+0.030$*** & $+0.031$*** \\
-        Diplôme $\geq$ Bachelor & $+0.369$*** & $+0.399$*** \\
-        High school / College & $+0.183$*** & $+0.193$*** \\
         Heures / semaine (1h) & $+0.004$*** & $+0.004$*** \\
         \bottomrule
     \end{tabular}
 \end{center}
 
-Un diplôme Bachelor+ augmente la probabilité de revenu élevé de
-\textbf{37 points de pourcentage}. Le mariage : \textbf{28 points}.
+L'effet marginal (dérivée) n'est défini que pour les variables
+\textbf{continues}. Pour les variables binaires, on utilise l'\textbf{effet
+incrémental} (slide suivant).
 
 \end{frame}
 
@@ -1504,9 +1498,10 @@ probabilité de revenu élevé de \textbf{7\% à 61\%}.
 \item Train, K. (2009). \textit{Discrete Choice Methods with Simulation},
   Cambridge.\newline
 
-\item Pour aller plus loin : chapitre 6 (variables polytomiques) et
-  chapitre 7 (pseudo maximum de vraisemblance).
+\item Cameron, A.C. \& Trivedi, P.K. (2005). \textit{Microeconometrics: Methods
+  and Applications}, Cambridge University Press, ch.~16.
 
+\end{itemize}
 \end{itemize}
 
 \end{frame}
